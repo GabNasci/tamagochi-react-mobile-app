@@ -3,8 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Font from 'expo-font';
 import { useFonts } from 'expo-font';
 import ButtonCustom from "@/components/ButtonCustom";
-
-
+import { useState } from "react";
 
 
 const play = () => {
