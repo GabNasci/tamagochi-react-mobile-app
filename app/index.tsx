@@ -2,11 +2,12 @@ import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Font from 'expo-font';
 import { useFonts } from 'expo-font';
-import ButtonCustom from "@/components/ButtonCustom";
+import ButtonPlay from "@/components/ButtonPlay";
 import { useState } from "react";
+import { Link } from "expo-router";
 
 
-const play = () => {
+const Play = () => {
 
     const [fontsLoaded] = useFonts({
         'supercell-font': require('@/assets/fonts/supercell-magic.ttf'),
@@ -28,7 +29,8 @@ const play = () => {
                         <Text style={styles.text}>Pato</Text>
                     </View>
                     <View style={styles.playContainer}>
-                        <ButtonCustom />
+                        <ButtonPlay link={'/createDuck'} text="Jogar"/>
+                        
                         <View style={styles.patoContainer}>
                             <Image
                                 source={require('@/assets/images/pato-marelo/yellow-pose-animation.gif')}
@@ -103,4 +105,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default play;
+export default Play;
