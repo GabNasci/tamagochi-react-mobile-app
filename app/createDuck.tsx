@@ -8,7 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const CreateDuck = () => {
 
     const [duck, setDuck] = useState<string>('yellow')
-    const [ducks, setDucks] = useState<string[]>(['yellow', 'mallard-duck'])
+    const [ducks, setDucks] = useState<string[]>(['yellow', 'mallard-duck', 'purple', 'green'])
 
     function getRandomDuck(ducks: string[], duck: string): string {
         const randomDuck = ducks[Math.floor(Math.random() * ducks.length)];
@@ -17,11 +17,22 @@ const CreateDuck = () => {
         return randomDuck;
     }
     
+    function loopIndex(ducks: string[], duck: string): number {
+        let index  = ducks.indexOf(duck)
+        if(index === (ducks.length - 1)) return 0
+        return index + 1;
+    }
+    function getAnotherDuck(ducks: string[], duck: string): string {
+        const anotherDuck = ducks[loopIndex(ducks, duck)]
+        return anotherDuck;
+    }
+    
 
     const handleChangeDuck = () => {
-        ;
-        setDuck(getRandomDuck(ducks, duck))
+        setDuck(getAnotherDuck(ducks, duck))
     }
+
+
 
 
 
@@ -48,7 +59,7 @@ const CreateDuck = () => {
                         </ImageBackground>
                     </View>
                     <View style={styles.duckBoxContainer}>
-                        <BoxDuck duck="yellow" width={180}/>
+                        <BoxDuck duck={duck} width={180}/>
                     </View>
                     <View style={styles.buttonContainer}>
                         <ButtonYellow onPress={handleChangeDuck} text="mudar"/>

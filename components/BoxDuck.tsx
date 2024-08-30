@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Image, ImageBackground, StyleSheet, View } from "react-native";
+import { Image, ImageBackground, StyleSheet, Text, View } from "react-native";
 
 type BoxDuckProps = {
     duck: string,
@@ -11,16 +11,17 @@ const BoxDuck = ({ duck, width }: BoxDuckProps) => {
     const [duckGif, setDuckGif] = useState()
 
     const getDuckGif = useCallback(() => {
-        if (duck === 'yellow') {
-            setDuckGif(require('@/assets/images/pato-marelo/yellow-pose-animation.gif'))
-        } else if (duck === 'mallard-duck') {
-            setDuckGif(require('@/assets/images/pato-real/mallard-duck-pose-animation.gif'))
-        }
-    }, [duckGif])
+        if (duck === 'yellow') return setDuckGif(require('@/assets/images/pato-marelo/yellow-pose-animation.gif'))
+        if (duck === 'mallard-duck') return setDuckGif(require('@/assets/images/pato-real/mallard-duck-pose-animation.gif'))
+        if (duck === 'purple') return setDuckGif(require('@/assets/images/pato-roxo/purple-pose-animation.gif'))
+        if (duck === 'green') return setDuckGif(require('@/assets/images/pato-verde/green-pose-animation.gif'))
+            
+    }, [duck])
 
 
     useEffect(() => {
         getDuckGif()
+        
     }, [getDuckGif])
     
 

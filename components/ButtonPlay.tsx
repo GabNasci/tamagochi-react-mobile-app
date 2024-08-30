@@ -13,14 +13,13 @@ const ButtonPlay = ({ link, text }: ButtonProps) => {
             style={styles.button}
             activeOpacity={0.85}
         >
-            
-                <ImageBackground
-                    source={require('@/assets/images/button_play.png')}
-                    style={styles.imageBackground}
-                    imageStyle={styles.imageStyle}
-                >
-                    <Link href={link} style={styles.text}>{text}</Link>
-                </ImageBackground>
+            <ImageBackground
+                source={require('@/assets/images/button_play.png')}
+                style={styles.imageBackground}
+                imageStyle={styles.imageStyle}
+            >
+                <Link href={link} style={styles.text}>{text}</Link>
+            </ImageBackground>
         </TouchableOpacity>
     );
 }
