@@ -2,34 +2,30 @@ import BoxDuck from "@/components/BoxDuck";
 import ButtonPlay from "@/components/ButtonPlay";
 import ButtonYellow from "@/components/ButtonYellow";
 import { useState } from "react";
-import { Image, ImageBackground, StyleSheet, Text, View } from "react-native";
+import { Image, ImageBackground, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { generate, developerSentences } from "@/lerolero/index";
 
 const CreateDuck = () => {
-
+    const [saveLerolero, setLerolero] = useState<string>(generate(developerSentences))
     const [duck, setDuck] = useState<string>('yellow')
     const [ducks, setDucks] = useState<string[]>(['yellow', 'mallard-duck', 'purple', 'green'])
+    const [name, setName] = useState('')
 
-    function getRandomDuck(ducks: string[], duck: string): string {
-        const randomDuck = ducks[Math.floor(Math.random() * ducks.length)];
-        if (duck === randomDuck) return getRandomDuck(ducks, duck);
-        setDuck(randomDuck);
-        return randomDuck;
-    }
-    
     function loopIndex(ducks: string[], duck: string): number {
-        let index  = ducks.indexOf(duck)
-        if(index === (ducks.length - 1)) return 0
+        let index = ducks.indexOf(duck)
+        if (index === (ducks.length - 1)) return 0
         return index + 1;
     }
+
     function getAnotherDuck(ducks: string[], duck: string): string {
         const anotherDuck = ducks[loopIndex(ducks, duck)]
         return anotherDuck;
     }
-    
 
     const handleChangeDuck = () => {
         setDuck(getAnotherDuck(ducks, duck))
+        setLerolero(generate(developerSentences))
     }
 
 
@@ -54,18 +50,34 @@ const CreateDuck = () => {
                             style={styles.phraseImage}
                         >
                             <Text style={styles.phraseText}>
-                                Por outro lado, o fenômeno da Internet desafia a capacidade de equalização dos conhecimentos estratégicos para atingir a excelência.
+                                {saveLerolero}
                             </Text>
                         </ImageBackground>
                     </View>
                     <View style={styles.duckBoxContainer}>
-                        <BoxDuck duck={duck} width={180}/>
+                        <BoxDuck duck={duck} width={180} />
                     </View>
                     <View style={styles.buttonContainer}>
-                        <ButtonYellow onPress={handleChangeDuck} text="mudar"/>
+                        <ButtonYellow onPress={handleChangeDuck} text="mudar" />
+                    </View>
+                    <View style={styles.inputContainer}>
+                        <ImageBackground
+                            source={require('@/assets/images/text-input.png')}
+                            resizeMode="cover"
+                            style={styles.textInputBackground}
+                        >
+                            <TextInput
+                                style={styles.textInput}
+                                onChangeText={newName => setName(newName)}
+                                value={name}
+                                placeholder="Nome..."
+                                placeholderTextColor={"white"}
+
+                            />
+                        </ImageBackground>
                     </View>
                     <View style={styles.buttonContainer}>
-                        <ButtonPlay link={'/listDucks'} text={duck}/>
+                        <ButtonPlay link={'/listDucks'} text={'Confirmar'} />
                     </View>
                 </View>
             </ImageBackground>
@@ -87,16 +99,13 @@ const styles = StyleSheet.create({
 
     },
     phraseContainer: {
-        flex: 1,
         alignItems: 'center',
     },
     duckBoxContainer: {
-        flex: 1,
         justifyContent: 'flex-start',
         alignItems: 'center',
     },
     buttonContainer: {
-        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -122,7 +131,6 @@ const styles = StyleSheet.create({
         height: 135,
     },
     headerContainer: {
-        flex: 1,
         flexDirection: "row",
         justifyContent: 'center',
         paddingVertical: 24,
@@ -138,6 +146,25 @@ const styles = StyleSheet.create({
         fontFamily: 'supercell-font',
         color: "black",
         fontSize: 14,
+    },
+    inputContainer: {
+        alignItems: "center",
+        padding: 20
+    },
+    textInputBackground: {
+        width: 300,  // Defina a largura do background
+        height: 50,  // Defina a altura do background
+        justifyContent: 'flex-start',
+        paddingHorizontal: 20,
+        paddingBottom: 5
+    },
+    textInput: {
+        flex: 1, // Ocupa todo o espaço disponível dentro do ImageBackground
+        color: "white", // Cor do texto
+        backgroundColor: 'transparent', // Remove o fundo padrão do TextInput
+        fontSize: 16, // Tamanho do texto
+        fontFamily: 'supercell-font'
+
     },
 })
 
