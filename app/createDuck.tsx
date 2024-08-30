@@ -1,9 +1,30 @@
+import BoxDuck from "@/components/BoxDuck";
 import ButtonPlay from "@/components/ButtonPlay";
 import ButtonYellow from "@/components/ButtonYellow";
+import { useState } from "react";
 import { Image, ImageBackground, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const CreateDuck = () => {
+
+    const [duck, setDuck] = useState<string>('yellow')
+    const [ducks, setDucks] = useState<string[]>(['yellow', 'mallard-duck'])
+
+    function getRandomDuck(ducks: string[], duck: string): string {
+        const randomDuck = ducks[Math.floor(Math.random() * ducks.length)];
+        if (duck === randomDuck) return getRandomDuck(ducks, duck);
+        setDuck(randomDuck);
+        return randomDuck;
+    }
+    
+
+    const handleChangeDuck = () => {
+        ;
+        setDuck(getRandomDuck(ducks, duck))
+    }
+
+
+
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <ImageBackground
@@ -27,22 +48,13 @@ const CreateDuck = () => {
                         </ImageBackground>
                     </View>
                     <View style={styles.duckBoxContainer}>
-                        <ImageBackground
-                            source={require('@/assets/images/duck-box.png')}
-                            resizeMode="cover"
-                            style={styles.boxImage}
-                        >
-                            <Image
-                                source={require('@/assets/images/pato-marelo/yellow-pose-animation.gif')}
-                                style={styles.duckImage}
-                            />
-                        </ImageBackground>
+                        <BoxDuck duck="yellow" width={180}/>
                     </View>
                     <View style={styles.buttonContainer}>
-                        <ButtonYellow text="mudar"/>
+                        <ButtonYellow onPress={handleChangeDuck} text="mudar"/>
                     </View>
                     <View style={styles.buttonContainer}>
-                        <ButtonPlay link={'/listDucks'} text={'Confirmar'}/>
+                        <ButtonPlay link={'/listDucks'} text={duck}/>
                     </View>
                 </View>
             </ImageBackground>
