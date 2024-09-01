@@ -1,8 +1,12 @@
-import { Text } from "react-native";
+import { Link } from "expo-router";
+import { Text, View } from "react-native";
 
 const Duck = () => {
     return (
-        <Text>Duck page</Text>
+        <View>
+            <Text>Duck page</Text>
+            <Link href={"/listDucks"}>Voltar</Link>
+        </View>
     );
 }
 

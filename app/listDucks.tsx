@@ -11,7 +11,7 @@ const ListDucks = () => {
                 style={styles.image}
             >
                 <Text>Listagem de patos</Text>
-                <Link href={'/duck'}>Pato</Link>
+                <Link href={'/duck/'}>Pato</Link>
             </ImageBackground>
         </SafeAreaView>
     );
