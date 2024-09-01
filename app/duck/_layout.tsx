@@ -1,3 +1,4 @@
+import Header from "@/components/Header";
 import { Link, Tabs } from "expo-router";
 import { Button, Image, StyleSheet, View } from "react-native";
 
@@ -11,10 +12,8 @@ const Layout = () => {
             <Tabs.Screen
                 name="index"
                 options={{
-                    headerTitle: "Pato",
-                    headerTitleAlign: "center",
-                    headerLeft: () => (
-                        <Link href={"/listDucks"}>Voltar</Link>
+                    header: () => (
+                        <Header title="Pato"/>
                     ),
                     tabBarLabel: 'Home',
                     tabBarShowLabel: false,
@@ -27,10 +26,8 @@ const Layout = () => {
             <Tabs.Screen
                 name="hungry"
                 options={{
-                    headerTitle: "Fome",
-                    headerTitleAlign: "center",
-                    headerLeft: () => (
-                        <Link href={"/listDucks"}>Voltar</Link>
+                    header: () => (
+                        <Header title="Fomes"/>
                     ),
                     tabBarLabel: 'Hungry',
                     tabBarShowLabel: false,
@@ -44,10 +41,8 @@ const Layout = () => {
             <Tabs.Screen
                 name="joy"
                 options={{
-                    headerTitle: "Diversão",
-                    headerTitleAlign: "center",
-                    headerLeft: () => (
-                        <Link href={"/listDucks"}>Voltar</Link>
+                    header: () => (
+                        <Header title="Divertes"/>
                     ),
                     tabBarLabel: 'Joy',
                     tabBarShowLabel: false,
@@ -60,10 +55,8 @@ const Layout = () => {
             <Tabs.Screen
                 name="sleep"
                 options={{
-                    headerTitle: "Dormir",
-                    headerTitleAlign: "center",
-                    headerLeft: () => (
-                        <Link href={"/listDucks"}>Voltar</Link>
+                    header: () => (
+                        <Header title="Dormes"/>
                     ),
                     tabBarLabel: 'Sleep',
                     tabBarShowLabel: false,
