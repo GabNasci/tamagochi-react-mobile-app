@@ -2,13 +2,14 @@ import { ImageBackground, StyleSheet, Text, TouchableOpacity } from "react-nativ
 import { Link, Href } from "expo-router";
 
 type ButtonYellow = {
+    onPress: () => void
     text: string
 }
 
-const ButtonYellow = ({text}: ButtonYellow) => {
+const ButtonYellow = ({text, onPress}: ButtonYellow) => {
     return (
 
-        <TouchableOpacity
+        <TouchableOpacity onPress={onPress}
             style={styles.button}
             activeOpacity={0.85}
         >

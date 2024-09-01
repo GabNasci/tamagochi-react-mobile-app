@@ -1,12 +1,15 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import StatusDuck, { StatusDuckEnum } from "@/components/StatusDuck";
+import { Link } from "expo-router";
 
 const Duck = () => {
     return (
-        <View style={styles.container}>
+        <View>
+            <Text>Duck page</Text>
             <StatusDuck nameStatus={StatusDuckEnum.Hunger} statusNumber={80} />
             <StatusDuck nameStatus={StatusDuckEnum.Joy} statusNumber={90} />
             <StatusDuck nameStatus={StatusDuckEnum.Sleep} statusNumber={50} />
+            <Link href={"/listDucks"}>Voltar</Link>
         </View>
     );
 }
