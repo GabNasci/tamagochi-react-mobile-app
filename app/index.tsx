@@ -20,7 +20,7 @@ const Play = () => {
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <ImageBackground
-                source={require('@/assets/images/background_play.png')}
+                source={require('@/assets/images/background/background_play.png')}
                 resizeMode="cover"
                 style={styles.image}
             >

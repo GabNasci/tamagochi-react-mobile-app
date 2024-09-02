@@ -1,24 +1,23 @@
-import { StyleSheet, View, Text } from "react-native";
-import StatusDuck, { StatusDuckEnum } from "@/components/StatusDuck";
-import { Link } from "expo-router";
+import { StyleSheet, View } from "react-native";
+import CardDuckPages from "@/components/CardDuckPages";
+import { StatusDuckEnum } from "@/components/StatusDuck";
 
 const Duck = () => {
     return (
-        <View>
-            <Text>Duck page</Text>
-            <StatusDuck nameStatus={StatusDuckEnum.Hunger} statusNumber={80} />
-            <StatusDuck nameStatus={StatusDuckEnum.Joy} statusNumber={90} />
-            <StatusDuck nameStatus={StatusDuckEnum.Sleep} statusNumber={50} />
-            <Link href={"/listDucks"}>Voltar</Link>
+        <View style={styles.container}>
+            <CardDuckPages nameDuck="Juninho" nameStatus={StatusDuckEnum.Hunger} />
+            <CardDuckPages nameDuck="Juninho" nameStatus={StatusDuckEnum.Joy} />
+            <CardDuckPages nameDuck="Juninho" nameStatus={StatusDuckEnum.Sleep} />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        width: "auto",
+        alignItems: "center",
+        backgroundColor: '#999',
         height: 1000,
-        backgroundColor: '#132646',
+        gap: 20,
     }
 })
 
