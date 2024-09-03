@@ -1,17 +1,22 @@
 import { type SQLiteDatabase } from "expo-sqlite"
 
 export async function initializeDatabase(database: SQLiteDatabase) {
+
+    await database.execAsync(`
+      DROP TABLE IF EXISTS ducks;
+    `);
+
     await database.execAsync(`
       CREATE TABLE IF NOT EXISTS ducks (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        type ENUM('yellow', 'mallard', 'green', 'purple') NOT NULL,
-        status INTEGER NOT NULL,
+        type TEXT NOT NULL,
+        status INTEGER,
         hungry INTEGER NOT NULL,
         joy INTEGER NOT NULL,
         sleep INTEGER NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     
       );
     `);
@@ -22,7 +27,8 @@ export async function initializeDatabase(database: SQLiteDatabase) {
       AFTER INSERT ON ducks
       BEGIN
         UPDATE ducks
-        SET status = NEW.hungry + NEW.joy + NEW.sleep
+        SET status = NEW.hungry + NEW.joy + NEW.sleep,
+            updated_at = CURRENT_TIMESTAMP
         WHERE id = NEW.id;
       END;
     `);
@@ -33,7 +39,8 @@ export async function initializeDatabase(database: SQLiteDatabase) {
       AFTER UPDATE OF hungry, joy, sleep ON ducks
       BEGIN
         UPDATE ducks
-        SET status = NEW.hungry + NEW.joy + NEW.sleep
+        SET status = NEW.hungry + NEW.joy + NEW.sleep,
+            updated_at = CURRENT_TIMESTAMP
         WHERE id = NEW.id;
       END;
     `);

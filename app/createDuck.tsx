@@ -2,15 +2,20 @@ import BoxDuck from "@/components/BoxDuck";
 import ButtonPlay from "@/components/ButtonPlay";
 import ButtonYellow from "@/components/ButtonYellow";
 import { useState } from "react";
-import { Image, ImageBackground, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Button, Image, ImageBackground, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { generate, developerSentences } from "@/lerolero/index";
+import { DuckType, useDuckDatabase } from "@/database/useDuckDatabase"
+import { router } from "expo-router";
 
 const CreateDuck = () => {
     const [saveLerolero, setLerolero] = useState<string>(generate(developerSentences))
     const [duck, setDuck] = useState<string>('yellow')
     const [ducks, setDucks] = useState<string[]>(['yellow', 'mallard-duck', 'purple', 'green'])
     const [name, setName] = useState('')
+
+
+    const duckDatabase = useDuckDatabase()
 
     function loopIndex(ducks: string[], duck: string): number {
         let index = ducks.indexOf(duck)
@@ -29,7 +34,29 @@ const CreateDuck = () => {
     }
 
 
+    const handleCreateDuck = async () => {
 
+        try {
+            if(name === "") return Alert.alert("O nome precisa ser preenchido!")
+
+            const response = await duckDatabase.create({ 
+                name: name, 
+                type: duck, 
+                status: 300, 
+                hungry: 100, 
+                sleep: 100, 
+                joy: 100 
+            })
+
+            Alert.alert("Pato cadastrado!")
+            router.push("/listDucks")
+            
+
+        } catch (error) {
+            console.log(error)
+        }
+        
+    }
 
 
     return (
@@ -77,7 +104,7 @@ const CreateDuck = () => {
                         </ImageBackground>
                     </View>
                     <View style={styles.buttonContainer}>
-                        <ButtonPlay link={'/listDucks'} text={'Confirmar'} />
+                        <Button title="Confirmar" onPress={handleCreateDuck} />
                     </View>
                 </View>
             </ImageBackground>
