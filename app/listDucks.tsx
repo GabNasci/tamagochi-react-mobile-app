@@ -1,7 +1,8 @@
+import BoxDuck from "@/components/BoxDuck";
 import { DuckDatabase, DuckType, useDuckDatabase } from "@/database/useDuckDatabase";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, ImageBackground, StyleSheet, Text, FlatList } from "react-native";
+import { Alert, ImageBackground, StyleSheet, Text, FlatList, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const ListDucks = () => {
@@ -39,7 +40,7 @@ const ListDucks = () => {
                 <FlatList 
                     data={ducks}
                     keyExtractor={item => String(item.id)}
-                    renderItem={({item}) => <Text>{item.name}, {item.type}</Text>}
+                    renderItem={({item}) => <View><Text>{item.name}</Text><BoxDuck width={180} duck={item.type}/></View>}
                 />
             </ImageBackground>
         </SafeAreaView>
