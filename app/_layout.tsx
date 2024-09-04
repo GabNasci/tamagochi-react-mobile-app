@@ -7,6 +7,9 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 
+import { SQLiteProvider } from 'expo-sqlite';
+import { initializeDatabase } from '@/database/initializeDatabase';
+
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
@@ -27,11 +30,13 @@ export default function RootLayout() {
   }
 
   return (
+    <SQLiteProvider databaseName='duckDatabase.db' onInit={initializeDatabase}>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="createDuck" options={{ headerShown: false }} />
         <Stack.Screen name="listDucks" />
-        <Stack.Screen name="duck" options={{ headerShown: false }}/>
+        <Stack.Screen name="duck" options={{ headerShown: false }} />
       </Stack>
+    </SQLiteProvider>
   );
 }
