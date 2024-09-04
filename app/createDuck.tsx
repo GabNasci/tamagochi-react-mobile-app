@@ -1,6 +1,6 @@
 import BoxDuck from "@/components/BoxDuck";
 import ButtonPlay from "@/components/ButtonPlay";
-import ButtonYellow from "@/components/ButtonYellow";
+import ButtonYellow, { ButtonColorEnum } from "@/components/ButtonYellow";
 import { useState } from "react";
 import { Image, ImageBackground, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -28,14 +28,10 @@ const CreateDuck = () => {
         setLerolero(generate(developerSentences))
     }
 
-
-
-
-
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <ImageBackground
-                source={require('@/assets/images/background_create.png')}
+                source={require('@/assets/images/background/background_create.png')}
                 resizeMode="cover"
                 style={styles.image}
             >
@@ -58,7 +54,13 @@ const CreateDuck = () => {
                         <BoxDuck duck={duck} width={180} />
                     </View>
                     <View style={styles.buttonContainer}>
-                        <ButtonYellow onPress={handleChangeDuck} text="mudar" />
+                        <ButtonYellow
+                            onPress={handleChangeDuck}
+                            text="mudar"
+                            width={180}
+                            height={50}
+                            buttonColor={ButtonColorEnum.Yellow}
+                        />
                     </View>
                     <View style={styles.inputContainer}>
                         <ImageBackground

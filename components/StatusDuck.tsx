@@ -26,7 +26,7 @@ const StatusDuck = ({ nameStatus, statusNumber }: StatusDuckProps) => {
 
     const imgStatusBarEmpty = require('@/assets/images/statusDuck/statusBarEmpty.png');
 
-    const filledWidth = (statusNumber / 100) * 218;
+    const filledWidth = (statusNumber / 100) * 164;
     return (
         <View style={styles.container}>
             <Image
@@ -46,7 +46,7 @@ const StatusDuck = ({ nameStatus, statusNumber }: StatusDuckProps) => {
                         <View style={{ width: filledWidth, overflow: 'hidden', alignItems: 'flex-start' }}>
                             <Image
                                 source={imgStatusBar[nameStatus]}
-                                style={styles.imgStatusBarFilled}
+                                style={styles.imgStatusBar}
                                 resizeMode="cover"
                             />
                         </View>
@@ -62,16 +62,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     imgIconStatus: {
-        width: 56,
-        height: 56,
+        width: 34,
+        height: 34,
     },
     imgStatusBar: {
-        width: 218,
-        height: 16,
-    },
-    imgStatusBarFilled: {
-        width: 218,
-        height: 16,
+        width: 164,
+        height: 12,
     },
     containerDetails: {
         marginLeft: 5
@@ -84,7 +80,7 @@ const styles = StyleSheet.create({
     text: {
         fontFamily: 'supercell-font',
         color: "white",
-        fontSize: 18,
+        fontSize: 14,
         textShadowColor: 'black',
         textShadowOffset: { width: 2, height: 2 },
         textShadowRadius: 2,

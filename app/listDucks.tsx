@@ -6,7 +6,7 @@ const ListDucks = () => {
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <ImageBackground
-                source={require('@/assets/images/background_create.png')}
+                source={require('@/assets/images/background/background_create.png')}
                 resizeMode="cover"
                 style={styles.image}
             >
