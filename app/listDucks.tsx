@@ -1,4 +1,5 @@
 import BoxDuck from "@/components/BoxDuck";
+import CardDuck from "@/components/CardDuck";
 import { DuckDatabase, DuckType, useDuckDatabase } from "@/database/useDuckDatabase";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
@@ -40,7 +41,7 @@ const ListDucks = () => {
                 <FlatList 
                     data={ducks}
                     keyExtractor={item => String(item.id)}
-                    renderItem={({item}) => <View><Text>{item.name}</Text><BoxDuck width={180} duck={item.type}/></View>}
+                    renderItem={({item}) => <CardDuck duck={item}/>}
                 />
             </ImageBackground>
         </SafeAreaView>
