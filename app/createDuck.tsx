@@ -53,10 +53,10 @@ const CreateDuck = () => {
             const response = await duckDatabase.create({ 
                 name: name, 
                 type: duck, 
-                status: 150, 
-                hungry: 50,     
-                sleep: 50, 
-                joy: 50 
+                status: 300, 
+                hungry: 100,     
+                sleep: 100, 
+                joy: 100 
             })
 
             Alert.alert("Pato cadastrado!")
