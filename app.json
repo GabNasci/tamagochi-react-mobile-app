@@ -4,7 +4,7 @@
     "slug": "pato-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/pato-marelo/yellow-swim-animation.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {

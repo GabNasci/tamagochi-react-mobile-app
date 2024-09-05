@@ -3,12 +3,40 @@ import StatusDuck, { StatusDuckEnum } from "./StatusDuck";
 import BoxDuck from "./BoxDuck";
 import { DuckDatabase } from "@/database/useDuckDatabase";
 import { router } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 
 type CardDuckProps = {
     duck: DuckDatabase
 }
 
 const CardDuck = ({ duck }: CardDuckProps) => {
+
+    const [statusName, setStatusName] = useState<string>("")
+
+    const getStatusName = useCallback(() => {
+        if (duck.status !== undefined) {
+            if (duck.status === 0) {
+                setStatusName("Morto");
+            } else if (duck.status >= 1 && duck.status <= 50) {
+                setStatusName("Crítico");
+            } else if (duck.status >= 51 && duck.status <= 100) {
+                setStatusName("Muito Triste");
+            } else if (duck.status >= 101 && duck.status <= 150) {
+                setStatusName("Triste");
+            } else if (duck.status >= 151 && duck.status <= 200) {
+                setStatusName("Ok");
+            } else if (duck.status >= 201 && duck.status <= 250) {
+                setStatusName("Bem");
+            } else if (duck.status >= 251 && duck.status <= 300) {
+                setStatusName("Muito Bem");
+            }
+        }
+    }, [duck]);
+
+    useEffect(() => {
+        getStatusName();
+    }, [getStatusName]);
+
     return (
         <ImageBackground
             source={require('@/assets/images/background/backgroundCardDuck.png')}
@@ -20,7 +48,7 @@ const CardDuck = ({ duck }: CardDuckProps) => {
             })} activeOpacity={0.5} style={styles.container}>
                 <View style={styles.containerDuck}>
                     <BoxDuck duck={duck.type} width={117} status={duck.status}/>
-                    <Text style={[styles.text, styles.subTitles]}>{duck.status}</Text>
+                    <Text style={[styles.text, styles.subTitles]}>{statusName}</Text>
                 </View>
                 <View style={styles.containerDuckInfo}>
                     <Text style={[styles.text, styles.textTitles]}>{duck.name}</Text>
