@@ -2,8 +2,12 @@ import { StyleSheet, View, Text, ImageBackground } from "react-native";
 import StatusDuck, { StatusDuckEnum } from "@/components/StatusDuck";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams } from "expo-router";
 
 const Duck = () => {
+
+    const {id} = useLocalSearchParams()
+
     return (
         <View style={styles.safeAreaContainer}>
             <ImageBackground

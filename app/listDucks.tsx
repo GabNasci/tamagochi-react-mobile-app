@@ -1,9 +1,9 @@
 import BoxDuck from "@/components/BoxDuck";
 import CardDuck from "@/components/CardDuck";
 import { DuckDatabase, DuckType, useDuckDatabase } from "@/database/useDuckDatabase";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, ImageBackground, StyleSheet, Text, FlatList, View } from "react-native";
+import { Alert, ImageBackground, StyleSheet, Text, FlatList, View, Button } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const ListDucks = () => {
@@ -36,13 +36,19 @@ const ListDucks = () => {
                 resizeMode="cover"
                 style={styles.image}
             >
-                <Text>Listagem de patos</Text>
-                <Link href={'/duck/'}>Pato</Link>
-                <FlatList 
-                    data={ducks}
-                    keyExtractor={item => String(item.id)}
-                    renderItem={({item}) => <CardDuck duck={item}/>}
-                />
+                <View style={styles.container}>
+                    <View style={styles.headerContainer}>
+                            <Text style={styles.text}>Os Patos</Text>
+                        </View>
+                    <FlatList 
+                        data={ducks}
+                        keyExtractor={item => String(item.id)}
+                        renderItem={({item}) => <CardDuck duck={item}/>}
+                    />
+                    <View style={{padding: 40}}>
+                        <Button onPress={() => router.push("/createDuck")} title="Criar"></Button>
+                    </View>
+                </View>
             </ImageBackground>
         </SafeAreaView>
     );
@@ -57,6 +63,26 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
     },
+    container: {
+        flex: 1,
+        flexDirection: "column",
+        justifyContent: 'center',
+        alignItems: 'center',
+
+    },
+    headerContainer: {
+        flexDirection: "row",
+        justifyContent: 'center',
+        paddingVertical: 24,
+
+
+    },
+    text: {
+        fontFamily: 'supercell-font',
+        color: "white",
+        fontSize: 40,
+    },
+
 })
 
 export default ListDucks;

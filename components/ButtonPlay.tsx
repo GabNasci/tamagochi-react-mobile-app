@@ -1,5 +1,5 @@
 import { ImageBackground, StyleSheet, Text, TouchableOpacity } from "react-native";
-import { Link, Href } from "expo-router";
+import { Link, Href, router } from "expo-router";
 
 type ButtonProps = {
     link: Href,
@@ -12,13 +12,14 @@ const ButtonPlay = ({ link, text }: ButtonProps) => {
         <TouchableOpacity
             style={styles.button}
             activeOpacity={0.85}
+            onPress={() => router.push(link)}
         >
             <ImageBackground
                 source={require('@/assets/images/button_play.png')}
                 style={styles.imageBackground}
                 imageStyle={styles.imageStyle}
             >
-                <Link href={link} style={styles.text}>{text}</Link>
+                <Text style={styles.text}>{text}</Text>
             </ImageBackground>
         </TouchableOpacity>
     );

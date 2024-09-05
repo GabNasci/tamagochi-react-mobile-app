@@ -3,15 +3,36 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Font from 'expo-font';
 import { useFonts } from 'expo-font';
 import ButtonPlay from "@/components/ButtonPlay";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "expo-router";
+import { useDuckDatabase } from "@/database/useDuckDatabase";
 
 
 const Play = () => {
 
+    const duckDataBase = useDuckDatabase()
+
     const [fontsLoaded] = useFonts({
         'supercell-font': require('@/assets/fonts/supercell-magic.ttf'),
     });
+
+    const [duckExists, setDuckExists] = useState(false)
+    
+
+    const handleDuckExists = async () => {
+        try {
+            const response = await duckDataBase.findFirst()
+            if(response) return setDuckExists(true)
+
+        } catch (error) {
+            throw error
+        }
+    }
+
+    useEffect(() => {
+        handleDuckExists()
+    }, [])
+
 
     if(!fontsLoaded) {
         return <Text>Carregando...</Text>
@@ -29,7 +50,7 @@ const Play = () => {
                         <Text style={styles.text}>Pato</Text>
                     </View>
                     <View style={styles.playContainer}>
-                        <ButtonPlay link={'/createDuck'} text="Jogar"/>
+                        <ButtonPlay link={duckExists ? "/listDucks" : "/createDuck"} text="Jogar"/>
                         
                         <View style={styles.patoContainer}>
                             <Image

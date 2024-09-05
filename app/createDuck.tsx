@@ -1,7 +1,7 @@
 import BoxDuck from "@/components/BoxDuck";
 import ButtonPlay from "@/components/ButtonPlay";
 import ButtonYellow, { ButtonColorEnum } from "@/components/ButtonYellow";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Button, Image, ImageBackground, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { generate, developerSentences } from "@/lerolero/index";
@@ -13,6 +13,7 @@ const CreateDuck = () => {
     const [duck, setDuck] = useState<string>('yellow')
     const [ducks, setDucks] = useState<string[]>(['yellow', 'mallard-duck', 'purple', 'green'])
     const [name, setName] = useState('')
+    const [duckExists, setDuckExists] = useState(false)
 
 
     const duckDatabase = useDuckDatabase()
@@ -31,6 +32,16 @@ const CreateDuck = () => {
     const handleChangeDuck = () => {
         setDuck(getAnotherDuck(ducks, duck))
         setLerolero(generate(developerSentences))
+    }
+
+    const handleDuckExists = async () => {
+        try {
+            const response = await duckDatabase.findFirst()
+            if(response) return setDuckExists(true)
+
+        } catch (error) {
+            throw error
+        }
     }
 
 
@@ -57,6 +68,10 @@ const CreateDuck = () => {
         }
         
     }
+
+    useEffect(() => {
+        handleDuckExists()
+    }, [])
 
 
     return (
@@ -111,6 +126,10 @@ const CreateDuck = () => {
                     </View>
                     <View style={styles.buttonContainer}>
                         <Button title="Confirmar" onPress={handleCreateDuck} />
+                        {duckExists && (
+                            <Button title="Voltar" onPress={() => router.back()} />
+                        )}
+                        
                     </View>
                 </View>
             </ImageBackground>

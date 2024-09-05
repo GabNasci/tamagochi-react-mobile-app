@@ -34,7 +34,7 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="createDuck" options={{ headerShown: false }} />
-        <Stack.Screen name="listDucks" />
+        <Stack.Screen name="listDucks" options={{ headerShown: false }} />
         <Stack.Screen name="duck" options={{ headerShown: false }} />
       </Stack>
     </SQLiteProvider>

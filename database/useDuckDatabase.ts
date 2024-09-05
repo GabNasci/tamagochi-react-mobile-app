@@ -12,7 +12,7 @@ export type DuckDatabase = {
     id: number,
     name: string,
     type: string,
-    status: number,
+    status?: number,
     hungry: number,
     joy: number,
     sleep: number
@@ -25,13 +25,12 @@ export function useDuckDatabase() {
 
     async function create(data: Omit<DuckDatabase, "id">) {
         const statement = await database.prepareAsync(
-            "INSERT INTO ducks (name, type, status, hungry, joy, sleep) VALUES($name, $type, $status, $hungry, $joy, $sleep)")
+            "INSERT INTO ducks (name, type, hungry, joy, sleep) VALUES($name, $type, $hungry, $joy, $sleep)")
 
         try {
             const result = await statement.executeAsync({
                 $name: data.name,
                 $type: data.type,
-                $status: data.status,
                 $hungry: data.hungry,
                 $joy: data.joy,
                 $sleep: data.sleep
@@ -53,8 +52,20 @@ export function useDuckDatabase() {
             return response
         } catch (error) {
             throw error
-        }
+        } 
     }
 
-    return { create, getAll }
+    async function findFirst() {
+        try {
+            const query = "SELECT * FROM ducks LIMIT 1;"
+
+            const response = await database.getFirstAsync<DuckDatabase>(query)
+
+            return response
+        } catch (error) {
+            throw error
+        } 
+    }
+
+    return { create, getAll, findFirst }
 }
