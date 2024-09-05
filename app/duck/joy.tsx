@@ -1,8 +1,33 @@
+import CardDuckPages from "@/components/CardDuckPages";
+import DuckGif from "@/components/DuckGif";
 import StatusDuck, { StatusDuckEnum } from "@/components/StatusDuck";
-import { Link } from "expo-router";
-import { ImageBackground, StyleSheet, Text, View } from "react-native";
+import { DuckDatabase, useDuckDatabase } from "@/database/useDuckDatabase";
+import { Link, useGlobalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+import { Alert, ImageBackground, StyleSheet, Text, View } from "react-native";
 
 const Joy = () => {
+    const duckDataBase = useDuckDatabase()
+    const {id} = useGlobalSearchParams()
+    const [duck, setDuck] = useState<DuckDatabase>()
+
+    const handleGetDuck = async (id: number) => {
+        try {
+            const response = await duckDataBase.findById(id)
+            if(response) return setDuck(response)
+            return Alert.alert("Pato não encontrado!")
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        handleGetDuck(Number(id))
+    }, [])
+
+
+
+
     return (
         <View style={styles.safeAreaContainer}>
             <ImageBackground
@@ -10,11 +35,16 @@ const Joy = () => {
                 resizeMode="cover"
                 style={styles.image}
             >
-                <Text>Joy page</Text>
-                <StatusDuck nameStatus={StatusDuckEnum.Hunger} statusNumber={80} />
-                <StatusDuck nameStatus={StatusDuckEnum.Joy} statusNumber={90} />
-                <StatusDuck nameStatus={StatusDuckEnum.Sleep} statusNumber={50} />
-                <Link href={"/listDucks"}>Voltar</Link>
+                {duck ? (
+                    <View style={styles.mainContainer}>
+                        <CardDuckPages duck={duck} nameStatus={StatusDuckEnum.Joy}/>
+                        <DuckGif duck={duck.type} width={140} inverted={true}/>
+                    </View>
+                ): (<View style={styles.loadingContainer}>
+                        <Text style={styles.loadingText}>Carregando...</Text>
+                    </View>
+                    )
+                }
             </ImageBackground>
         </View>
     );
@@ -27,8 +57,27 @@ const styles = StyleSheet.create({
     },
     image: {
         flex: 1,
-        justifyContent: 'center',
+        padding: 20,
+        alignItems: "center"
     },
+    mainContainer: {
+        flex: 1,
+        alignItems: "flex-end",
+        justifyContent: "space-between"
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    loadingText : {
+        fontFamily: 'supercell-font',
+        color: "white",
+        fontSize: 40,
+        textShadowColor: 'black',
+        textShadowOffset: { width: 2, height: 2 },
+        textShadowRadius: 2,
+    }
 })
 
 export default Joy;

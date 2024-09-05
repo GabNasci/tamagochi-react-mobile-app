@@ -1,12 +1,31 @@
-import { StyleSheet, View, Text, ImageBackground } from "react-native";
+import { StyleSheet, View, Text, ImageBackground, Alert } from "react-native";
 import StatusDuck, { StatusDuckEnum } from "@/components/StatusDuck";
 import { Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams } from "expo-router";
+import { useGlobalSearchParams } from "expo-router";
+import { DuckDatabase, useDuckDatabase } from "@/database/useDuckDatabase";
+import { useEffect, useState } from "react";
+import CardMenu from "@/components/CardMenu";
+import DuckGif from "@/components/DuckGif";
 
 const Duck = () => {
+    const duckDataBase = useDuckDatabase()
+    const { id } = useGlobalSearchParams()
+    const [duck, setDuck] = useState<DuckDatabase>()
 
-    const {id} = useLocalSearchParams()
+    const handleGetDuck = async (id: number) => {
+        try {
+            const response = await duckDataBase.findById(id)
+            if (response) return setDuck(response)
+            return Alert.alert("Pato não encontrado!")
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        handleGetDuck(Number(id))
+    }, [])
 
     return (
         <View style={styles.safeAreaContainer}>
@@ -15,11 +34,18 @@ const Duck = () => {
                 resizeMode="cover"
                 style={styles.image}
             >
-                <Text>Duck page</Text>
-                <StatusDuck nameStatus={StatusDuckEnum.Hunger} statusNumber={80} />
-                <StatusDuck nameStatus={StatusDuckEnum.Joy} statusNumber={90} />
-                <StatusDuck nameStatus={StatusDuckEnum.Sleep} statusNumber={50} />
-                <Link href={"/listDucks"}>Voltar</Link>
+                {duck ? (
+                    <View style={styles.mainContainer}>
+                        <CardMenu duck={duck} />
+                        <DuckGif duck={duck.type} width={140}/>
+                    </View>
+                ): (<View style={styles.loadingContainer}>
+                        <Text style={styles.loadingText}>Carregando...</Text>
+                    </View>
+                    )
+                }
+
+
             </ImageBackground>
         </View>
     );
@@ -32,8 +58,26 @@ const styles = StyleSheet.create({
     },
     image: {
         flex: 1,
-        justifyContent: 'center',
+        padding: 40,
+        alignItems: "center"
     },
+    mainContainer: {
+        flex: 1,
+        justifyContent: "space-between"
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    loadingText : {
+        fontFamily: 'supercell-font',
+        color: "white",
+        fontSize: 40,
+        textShadowColor: 'black',
+        textShadowOffset: { width: 2, height: 2 },
+        textShadowRadius: 2,
+    }
 })
 
 export default Duck;

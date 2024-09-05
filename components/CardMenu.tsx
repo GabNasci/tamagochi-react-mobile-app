@@ -1,23 +1,23 @@
 import { ImageBackground, StyleSheet, Text, View } from "react-native";
 import StatusDuck, { StatusDuckEnum } from "./StatusDuck";
+import { DuckDatabase } from "@/database/useDuckDatabase";
 
 type StatusDuckProps = {
-    nameDuck: string,
-    messageStatus: string,
+    duck: DuckDatabase,
 }
 
-const CardMenu = ({ nameDuck, messageStatus, }: StatusDuckProps) => {
+const CardMenu = ({ duck }: StatusDuckProps) => {
     return (
         <ImageBackground
             source={require('@/assets/images/background/backgroundStatusMenu.png')}
             style={styles.container}
         >
-            <Text style={[styles.text, styles.textTitles]}>{nameDuck}</Text>
-            <Text style={[styles.text, styles.subTitles]}>{messageStatus}</Text>
+            <Text style={[styles.text, styles.textTitles]}>{duck.name}</Text>
+            <Text style={[styles.text, styles.subTitles]}>{duck.status}</Text>
             <View style={styles.containerStatusDuck}>
-                <StatusDuck nameStatus={StatusDuckEnum.Hunger} statusNumber={80} />
-                <StatusDuck nameStatus={StatusDuckEnum.Joy} statusNumber={90} />
-                <StatusDuck nameStatus={StatusDuckEnum.Sleep} statusNumber={50} />
+                <StatusDuck nameStatus={StatusDuckEnum.Hunger} statusNumber={duck.hungry} />
+                <StatusDuck nameStatus={StatusDuckEnum.Joy} statusNumber={duck.joy} />
+                <StatusDuck nameStatus={StatusDuckEnum.Sleep} statusNumber={duck.sleep} />
             </View>
         </ImageBackground>
     );

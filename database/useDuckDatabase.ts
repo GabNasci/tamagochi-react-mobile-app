@@ -67,5 +67,17 @@ export function useDuckDatabase() {
         } 
     }
 
-    return { create, getAll, findFirst }
+    async function findById(id: number) {
+        try {
+            const query = `SELECT * FROM ducks WHERE id = ${id};` 
+
+            const response = await database.getFirstAsync<DuckDatabase>(query)
+
+            return response
+        } catch (error) {
+            throw error
+        } 
+    }
+
+    return { create, getAll, findFirst, findById }
 }

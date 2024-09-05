@@ -2,13 +2,14 @@ import { ImageBackground, StyleSheet, Text, View } from "react-native";
 import StatusDuck, { StatusDuckEnum } from "./StatusDuck";
 import ButtonYellow, { ButtonColorEnum } from "./ButtonYellow";
 import ButtonPlay from "./ButtonPlay";
+import { DuckDatabase } from "@/database/useDuckDatabase";
 
 type CardDuckPagesProps = {
-    nameDuck: string,
+    duck: DuckDatabase,
     nameStatus: StatusDuckEnum
 }
 
-const CardDuckPages = ({ nameDuck, nameStatus }: CardDuckPagesProps) => {
+const CardDuckPages = ({ duck, nameStatus }: CardDuckPagesProps) => {
     const { imgBackground, heightBackground } = nameStatus === StatusDuckEnum.Hunger ?
         { imgBackground: require('@/assets/images/background/backgroundCardDuckPagesSmall.png'), heightBackground: 122 } :
         { imgBackground: require('@/assets/images/background/backgroundCardDuckPages.png'), heightBackground: 220 }
@@ -18,10 +19,17 @@ const CardDuckPages = ({ nameDuck, nameStatus }: CardDuckPagesProps) => {
             source={imgBackground}
             style={[styles.container, { height: heightBackground }]}
         >
-            <Text style={styles.text}>{nameDuck}</Text>
-            <StatusDuck nameStatus={nameStatus} statusNumber={80} />
+            <Text style={styles.text}>{duck.name}</Text>
+            {  nameStatus === StatusDuckEnum.Joy ? (
+                <StatusDuck nameStatus={nameStatus} statusNumber={duck.joy} />
+            ): nameStatus === StatusDuckEnum.Sleep ? (
+                <StatusDuck nameStatus={nameStatus} statusNumber={duck.sleep} />
+            ): nameStatus === StatusDuckEnum.Hunger ? (
+                <StatusDuck nameStatus={nameStatus} statusNumber={duck.hungry} />
+            ): <></>}
 
             {nameStatus === StatusDuckEnum.Joy ? (
+                
                 <View style={styles.containerJoy}>
                     <ButtonYellow
                         onPress={() => console.log('Jogo 01')}
