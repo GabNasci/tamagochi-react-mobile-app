@@ -5,10 +5,11 @@ import { DuckDatabase } from "@/database/useDuckDatabase";
 
 type BoxDuckProps = {
     duck: string,
-    width: number
+    width: number,
+    status?: number
 }
 
-const BoxDuck = ({ duck, width }: BoxDuckProps) => {
+const BoxDuck = ({ duck, width, status}: BoxDuckProps) => {
 
     return (
         <ImageBackground
@@ -21,7 +22,7 @@ const BoxDuck = ({ duck, width }: BoxDuckProps) => {
                 alignItems: 'center',
             }}
         >
-            <DuckGif duck={duck} width={width - 45}/>
+            <DuckGif duck={duck} width={width - 45} status={status}/>
         </ImageBackground>
     );
 }

@@ -19,7 +19,7 @@ const CardDuck = ({ duck }: CardDuckProps) => {
                 params: {id: duck.id}
             })} activeOpacity={0.5} style={styles.container}>
                 <View style={styles.containerDuck}>
-                    <BoxDuck duck={duck.type} width={117} />
+                    <BoxDuck duck={duck.type} width={117} status={duck.status}/>
                     <Text style={[styles.text, styles.subTitles]}>{duck.status}</Text>
                 </View>
                 <View style={styles.containerDuckInfo}>
