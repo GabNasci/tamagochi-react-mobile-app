@@ -1,25 +1,8 @@
 import Header from "@/components/Header";
-import { updadteAttributesByTime } from "@/database/updateAttributesByTime";
-import { updadteAttributesByTimeById } from "@/database/updateAttributesByTimeById";
-import { useDuckDatabase } from "@/database/useDuckDatabase";
-import { Link, Tabs, useGlobalSearchParams } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
-import { Alert, Button, Image, StyleSheet, View } from "react-native";
+import { Tabs } from "expo-router";
+import { Image, StyleSheet } from "react-native";
 
 const Layout = () => {
-
-    const {id} = useGlobalSearchParams()
-
-
-
-    useEffect(() => {
-        updadteAttributesByTimeById(Number(id), Date.now())
-    }, [])
-
-
-
-
-
 
     return (
         <Tabs

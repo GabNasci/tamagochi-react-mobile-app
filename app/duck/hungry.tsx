@@ -2,8 +2,8 @@ import CardDuckPages from "@/components/CardDuckPages";
 import DuckGif from "@/components/DuckGif";
 import StatusDuck, { StatusDuckEnum } from "@/components/StatusDuck";
 import { DuckDatabase, useDuckDatabase } from "@/database/useDuckDatabase";
-import { Link, useGlobalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { Link, useFocusEffect, useGlobalSearchParams } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { Alert, ImageBackground, StyleSheet, Text, View } from "react-native";
 
 const Hungry = () => {
@@ -14,17 +14,20 @@ const Hungry = () => {
 
     const handleGetDuck = async (id: number) => {
         try {
+            await duckDataBase.updateAtributesByTime()
             const response = await duckDataBase.findById(id)
-            if(response) return setDuck(response)
+            if (response) return setDuck(response)
             return Alert.alert("Pato não encontrado!")
         } catch (error) {
             console.log(error)
         }
     }
 
-    useEffect(() => {
-        handleGetDuck(Number(id))
-    }, [])
+    useFocusEffect(
+        useCallback(() => {
+            handleGetDuck(Number(id))
+        }, [duck])
+    );
 
 
 

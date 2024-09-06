@@ -29,8 +29,7 @@ export async function initializeDatabase(database: SQLiteDatabase) {
       AFTER INSERT ON ducks
       BEGIN
         UPDATE ducks
-        SET status = NEW.hungry + NEW.joy + NEW.sleep,
-            updated_at = CURRENT_TIMESTAMP
+        SET status = NEW.hungry + NEW.joy + NEW.sleep
         WHERE id = NEW.id;
       END;
     `);
@@ -41,8 +40,7 @@ export async function initializeDatabase(database: SQLiteDatabase) {
       AFTER UPDATE OF hungry, joy, sleep ON ducks
       BEGIN
         UPDATE ducks
-        SET status = NEW.hungry + NEW.joy + NEW.sleep,
-            updated_at = CURRENT_TIMESTAMP
+        SET status = NEW.hungry + NEW.joy + NEW.sleep
         WHERE id = NEW.id;
       END;
     `);

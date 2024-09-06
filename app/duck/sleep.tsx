@@ -2,7 +2,7 @@ import CardDuckPages from "@/components/CardDuckPages";
 import DuckGif from "@/components/DuckGif";
 import StatusDuck, { StatusDuckEnum } from "@/components/StatusDuck";
 import { DuckDatabase, useDuckDatabase } from "@/database/useDuckDatabase";
-import { Link, useGlobalSearchParams } from "expo-router";
+import { Link, useFocusEffect, useGlobalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Alert, ImageBackground, StyleSheet, Text, View } from "react-native";
 
@@ -11,25 +11,14 @@ const Sleep = () => {
     const {id} = useGlobalSearchParams()
     const [duck, setDuck] = useState<DuckDatabase>()
 
-    const handleGetDuck = async (id: number) => {
-        try {
-            const response = await duckDataBase.findById(id)
-            if(response) return setDuck(response)
-            return Alert.alert("Pato não encontrado!")
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
     const handleSleep = useCallback(async ()=> {
         try {
             const updatedDuck = await duckDataBase.findById(Number(id))
             if(!updatedDuck) return Alert.alert("Não foi possível encontrar o pato!")
-            const response = await duckDataBase.updadteAtributes({
+            const response = await duckDataBase.updateAtributes({
                 hungry: updatedDuck.hungry,
                 joy: updatedDuck.joy,
-                sleep: updatedDuck.sleep - 10,
-                updated_at: updatedDuck.updated_at,
+                sleep: updatedDuck.sleep + 10,
                 id: updatedDuck.id
             })
         } catch (error) {
@@ -38,9 +27,22 @@ const Sleep = () => {
 
     }, [duck])
 
-    useEffect(() => {
-        handleGetDuck(Number(id))
-    }, [handleGetDuck])
+    const handleGetDuck = async (id: number) => {
+        try {
+            await duckDataBase.updateAtributesByTime()
+            const response = await duckDataBase.findById(id)
+            if (response) return setDuck(response)
+            return Alert.alert("Pato não encontrado!")
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useFocusEffect(
+        useCallback(() => {
+            handleGetDuck(Number(id))
+        }, [duck])
+    );
 
 
 

@@ -1,10 +1,10 @@
 import { StyleSheet, View, Text, ImageBackground, Alert } from "react-native";
 import StatusDuck, { StatusDuckEnum } from "@/components/StatusDuck";
-import { Link } from "expo-router";
+import { Link, useFocusEffect } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalSearchParams } from "expo-router";
 import { DuckDatabase, useDuckDatabase } from "@/database/useDuckDatabase";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CardMenu from "@/components/CardMenu";
 import DuckGif from "@/components/DuckGif";
 
@@ -15,6 +15,7 @@ const Duck = () => {
 
     const handleGetDuck = async (id: number) => {
         try {
+            await duckDataBase.updateAtributesByTime()
             const response = await duckDataBase.findById(id)
             if (response) return setDuck(response)
             return Alert.alert("Pato não encontrado!")
@@ -23,9 +24,11 @@ const Duck = () => {
         }
     }
 
-    useEffect(() => {
-        handleGetDuck(Number(id))
-    }, [duck])
+    useFocusEffect(
+        useCallback(() => {
+            handleGetDuck(Number(id))
+        }, [duck])
+    );
 
     return (
         <View style={styles.safeAreaContainer}>

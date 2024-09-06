@@ -53,7 +53,7 @@ export function useDuckDatabase() {
             return response
         } catch (error) {
             throw error
-        } 
+        }
     }
 
     async function findFirst() {
@@ -65,12 +65,12 @@ export function useDuckDatabase() {
             return response
         } catch (error) {
             throw error
-        } 
+        }
     }
 
     async function findById(id: number) {
         try {
-            const query = `SELECT * FROM ducks WHERE id = ${id};` 
+            const query = `SELECT * FROM ducks WHERE id = ${id};`
 
             const response = await database.getFirstAsync<DuckDatabase>(query)
 
@@ -80,18 +80,17 @@ export function useDuckDatabase() {
         }
     }
 
-    async function updadteAtributes(data: Omit<DuckDatabase, "name" | "type">) {
+    async function updateAtributes(data: Omit<DuckDatabase, "name" | "type" | "updated_at">) {
         const statement = await database.prepareAsync(
-            "UPDATE ducks SET hungry = $hungry, joy = $joy, sleep = $sleep, updated_at = $updated_at WHERE id = $id"
+            "UPDATE ducks SET hungry = $hungry, joy = $joy, sleep = $sleep WHERE id = $id"
         );
-    
+
         try {
             const result = await statement.executeAsync({
                 $hungry: data.hungry,
                 $joy: data.joy,
                 $sleep: data.sleep,
-                $updated_at: Date.now(),
-                $id: data.id             
+                $id: data.id
             });
 
         } catch (error) {
@@ -101,5 +100,38 @@ export function useDuckDatabase() {
         }
     }
 
-    return { create, getAll, findFirst, findById, updadteAtributes }
+    async function updateAtributesByTime() {
+        const ducks = await getAll();
+    
+        for (const duck of ducks) {
+            const minutesPassed = (Date.now() - new Date(duck.updated_at).getTime()) / (1000 * 60);
+            console.log(minutesPassed, duck.id);
+    
+            if (Math.floor(minutesPassed) >= 1) {
+
+                const statement = await database.prepareAsync(
+                    "UPDATE ducks SET hungry = $hungry, joy = $joy, sleep = $sleep, updated_at = $updated_at WHERE id = $id"
+                );
+    
+                try {
+                    const result = await statement.executeAsync({
+                        $hungry: Math.max(0, duck.hungry - Math.floor(minutesPassed) * 10),
+                        $joy: Math.max(0, duck.joy - Math.floor(minutesPassed) * 10),
+                        $sleep: Math.max(0, duck.sleep - Math.floor(minutesPassed) * 10),
+                        $updated_at: new Date().toISOString(), // Atualiza com a data atual
+                        $id: duck.id
+                    });
+                } catch (error) {
+                    throw error;
+                } finally {
+                    await statement.finalizeAsync();
+                }
+            }
+        }
+    }
+    
+
+    
+
+    return { create, getAll, findFirst, findById, updateAtributes, updateAtributesByTime }
 }
