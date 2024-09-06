@@ -22,7 +22,7 @@ const BoxDuck = ({ duck, width, status}: BoxDuckProps) => {
                 alignItems: 'center',
             }}
         >
-            <DuckGif duck={duck} width={width - 45} status={status}/>
+            <DuckGif duck={duck} width={width - 35} status={status}/>
         </ImageBackground>
     );
 }

@@ -37,7 +37,7 @@ const CreateDuck = () => {
     const handleDuckExists = async () => {
         try {
             const response = await duckDatabase.findFirst()
-            if(response) return setDuckExists(true)
+            if (response) return setDuckExists(true)
 
         } catch (error) {
             throw error
@@ -48,25 +48,25 @@ const CreateDuck = () => {
     const handleCreateDuck = async () => {
 
         try {
-            if(name === "") return Alert.alert("O nome precisa ser preenchido!")
+            if (name === "") return Alert.alert("O nome precisa ser preenchido!")
 
-            const response = await duckDatabase.create({ 
-                name: name, 
-                type: duck, 
-                status: 300, 
-                hungry: 100,     
-                sleep: 100, 
-                joy: 100 
+            const response = await duckDatabase.create({
+                name: name,
+                type: duck,
+                status: 300,
+                hungry: 100,
+                sleep: 100,
+                joy: 100
             })
 
             Alert.alert("Pato cadastrado!")
             router.push("/listDucks")
-            
+
 
         } catch (error) {
             console.log(error)
         }
-        
+
     }
 
     useEffect(() => {
@@ -125,11 +125,23 @@ const CreateDuck = () => {
                         </ImageBackground>
                     </View>
                     <View style={styles.buttonContainer}>
-                        <Button title="Confirmar" onPress={handleCreateDuck} />
+                        <ButtonYellow
+                            onPress={handleCreateDuck}
+                            text="Confirmar"
+                            width={200}
+                            height={60}
+                            buttonColor={ButtonColorEnum.Orange}
+                        />
                         {duckExists && (
-                            <Button title="Voltar" onPress={() => router.back()} />
+                            <ButtonYellow
+                                onPress={() => router.back()}
+                                text="Voltar"
+                                width={147}
+                                height={40}
+                                buttonColor={ButtonColorEnum.Blue}
+                            />
                         )}
-                        
+
                     </View>
                 </View>
             </ImageBackground>

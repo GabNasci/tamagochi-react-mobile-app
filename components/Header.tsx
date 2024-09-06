@@ -38,10 +38,15 @@ const styles = StyleSheet.create({
     button: {
         alignSelf: "flex-start",
         marginLeft: 10,
+        padding: 10,
         position: "absolute",
         backgroundColor: "cyan",
         fontFamily: 'supercell-font',
         color: "white",
+        textShadowColor: 'black',
+        textShadowOffset: { width: 2, height: 2 },
+        textShadowRadius: 2,
+        borderRadius: 8
     }
 })
 

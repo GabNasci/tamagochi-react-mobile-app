@@ -3,6 +3,7 @@ import { ImageBackground, StyleSheet, Text, TouchableOpacity } from "react-nativ
 export enum ButtonColorEnum {
     Yellow,
     Orange,
+    Blue,
 }
 
 type ButtonYellow = {
@@ -17,6 +18,7 @@ const ButtonYellow = ({ text, onPress, width, height, buttonColor }: ButtonYello
     const colorButton = {
         [ButtonColorEnum.Yellow]: require('@/assets/images/yellow-button.png'),
         [ButtonColorEnum.Orange]: require('@/assets/images/button_play.png'),
+        [ButtonColorEnum.Blue]: require('@/assets/images/button_blue.png'),
     }
 
     return (

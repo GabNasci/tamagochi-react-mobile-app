@@ -47,7 +47,7 @@ export function useDuckDatabase() {
         try {
             const query = "SELECT * FROM ducks"
 
-            const response = await database.getAllAsync<DuckDatabase[]>(query)
+            const response = await database.getAllAsync<DuckDatabase>(query)
 
             return response
         } catch (error) {

@@ -8,10 +8,10 @@ type DuckGifProps = {
     width: number,
     inverted?: boolean,
     status?: number,
-    screen?: string
+    action?: string
 }
 
-const DuckGif = ({duck, width, inverted = false, status, screen}: DuckGifProps) => {
+const DuckGif = ({duck, width, inverted = false, status, action}: DuckGifProps) => {
 
     const [duckGif, setDuckGif] = useState();
 
@@ -21,17 +21,15 @@ const DuckGif = ({duck, width, inverted = false, status, screen}: DuckGifProps) 
         if (selectedDuck) {
             if (status === 0) {
                 setDuckGif(selectedDuck.dead); 
-            } else if (screen === 'sleep') {
+            } else if (action === 'sleep') {
                 setDuckGif(selectedDuck.sleep); 
-            } else if (screen === 'hungry') {
-                setDuckGif(selectedDuck.swim); 
             } else if (status && status <= 150) {
                 setDuckGif(selectedDuck.cry); 
             } else {
                 setDuckGif(selectedDuck.pose); 
             }
         }
-    }, [duck, screen, status]);
+    }, [duck, action, status]);
 
     useEffect(() => {
         getDuckGif();

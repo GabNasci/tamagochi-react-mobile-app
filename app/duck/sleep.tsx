@@ -38,7 +38,7 @@ const Sleep = () => {
                 {duck ? (
                     <View style={styles.mainContainer}>
                         <CardDuckPages duck={duck} nameStatus={StatusDuckEnum.Sleep}/>
-                        <DuckGif duck={duck.type} width={140} screen="sleep"/>
+                        <DuckGif duck={duck.type} width={140}/>
                     </View>
                 ): (<View style={styles.loadingContainer}>
                         <Text style={styles.loadingText}>Carregando...</Text>

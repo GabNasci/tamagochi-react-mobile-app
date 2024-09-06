@@ -6,7 +6,6 @@ export const duckGifs = [
         cry: require('@/assets/images/pato-marelo/yellow-cry-animation.gif'),
         nope: require('@/assets/images/pato-marelo/yellow-nope-animation.gif'),
         sleep: require('@/assets/images/pato-marelo/yellow-sleep-animation.gif'),
-        swim: require('@/assets/images/pato-marelo/yellow-swim-animation.png')
     },
     {
         name: "mallard-duck",
@@ -15,7 +14,6 @@ export const duckGifs = [
         cry: require('@/assets/images/pato-marelo/yellow-cry-animation.gif'),
         nope: require('@/assets/images/pato-marelo/yellow-nope-animation.gif'),
         sleep: require('@/assets/images/pato-marelo/yellow-sleep-animation.gif'),
-        swim: require('@/assets/images/pato-marelo/yellow-swim-animation.png')
     },
     {
         name: "purple",
@@ -24,7 +22,6 @@ export const duckGifs = [
         cry: require('@/assets/images/pato-marelo/yellow-cry-animation.gif'),
         nope: require('@/assets/images/pato-marelo/yellow-nope-animation.gif'),
         sleep: require('@/assets/images/pato-marelo/yellow-sleep-animation.gif'),
-        swim: require('@/assets/images/pato-marelo/yellow-swim-animation.png')
     },
     {
         name: "green",
@@ -33,6 +30,5 @@ export const duckGifs = [
         cry: require('@/assets/images/pato-verde/green-cry-animation.gif'),
         nope: require('@/assets/images/pato-verde/green-nope-animation.gif'),
         sleep: require('@/assets/images/pato-marelo/yellow-sleep-animation.gif'),
-        swim: require('@/assets/images/pato-marelo/yellow-swim-animation.png')
     }
 ]
