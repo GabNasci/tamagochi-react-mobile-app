@@ -53,7 +53,6 @@ const CreateDuck = () => {
             const response = await duckDatabase.create({
                 name: name,
                 type: duck,
-                status: 300,
                 hungry: 100,
                 sleep: 100,
                 joy: 100
