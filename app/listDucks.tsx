@@ -24,6 +24,9 @@ const ListDucks = () => {
         }
         
     }
+    useEffect(() => {
+        getAllDucks()
+    }, [])
 
     useEffect(() => {
         getAllDucks()

@@ -1,25 +1,43 @@
 import Header from "@/components/Header";
-import { Link, Tabs } from "expo-router";
-import { Button, Image, StyleSheet, View } from "react-native";
+import { updadteAttributesByTime } from "@/database/updateAttributesByTime";
+import { updadteAttributesByTimeById } from "@/database/updateAttributesByTimeById";
+import { useDuckDatabase } from "@/database/useDuckDatabase";
+import { Link, Tabs, useGlobalSearchParams } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import { Alert, Button, Image, StyleSheet, View } from "react-native";
 
 const Layout = () => {
+
+    const {id} = useGlobalSearchParams()
+
+
+
+    useEffect(() => {
+        updadteAttributesByTimeById(Number(id), Date.now())
+    }, [])
+
+
+
+
+
+
     return (
         <Tabs
             screenOptions={{
-                tabBarStyle: {backgroundColor: "#40495A", height: 80},
+                tabBarStyle: { backgroundColor: "#40495A", height: 80 },
             }}
         >
             <Tabs.Screen
                 name="index"
                 options={{
                     header: () => (
-                        <Header title="Pato"/>
+                        <Header title="Pato" />
                     ),
                     tabBarLabel: 'Home',
                     tabBarShowLabel: false,
-                    tabBarIcon: ({focused}) => {
-                        if(focused) return <Image style={styles.IconSelected} resizeMode="cover" source={require('@/assets/images/navbar-icons/rubber_duck-selected.png')}/>
-                        return <Image style={styles.IconUnselected} resizeMode="cover" source={require('@/assets/images/navbar-icons/rubber_duck.png')}/>
+                    tabBarIcon: ({ focused }) => {
+                        if (focused) return <Image style={styles.IconSelected} resizeMode="cover" source={require('@/assets/images/navbar-icons/rubber_duck-selected.png')} />
+                        return <Image style={styles.IconUnselected} resizeMode="cover" source={require('@/assets/images/navbar-icons/rubber_duck.png')} />
                     },
                 }}
             />
@@ -27,28 +45,28 @@ const Layout = () => {
                 name="hungry"
                 options={{
                     header: () => (
-                        <Header title="Fomes"/>
+                        <Header title="Fomes" />
                     ),
                     tabBarLabel: 'Hungry',
                     tabBarShowLabel: false,
-                    tabBarIcon: ({focused}) => {
-                        if(focused) return <Image style={styles.IconSelected} resizeMode="cover" source={require('@/assets/images/navbar-icons/potatochip_green-selected.png')}/>
-                        return <Image style={styles.IconUnselected} resizeMode="cover" source={require('@/assets/images/navbar-icons/potatochip_green.png')}/>
+                    tabBarIcon: ({ focused }) => {
+                        if (focused) return <Image style={styles.IconSelected} resizeMode="cover" source={require('@/assets/images/navbar-icons/potatochip_green-selected.png')} />
+                        return <Image style={styles.IconUnselected} resizeMode="cover" source={require('@/assets/images/navbar-icons/potatochip_green.png')} />
                     },
                 }}
-                
+
             />
             <Tabs.Screen
                 name="joy"
                 options={{
                     header: () => (
-                        <Header title="Divertes"/>
+                        <Header title="Divertes" />
                     ),
                     tabBarLabel: 'Joy',
                     tabBarShowLabel: false,
-                    tabBarIcon: ({focused}) => {
-                        if(focused) return <Image style={styles.IconSelected} resizeMode="cover" source={require('@/assets/images/navbar-icons/rubber_ducktopus-selected.png')}/>
-                        return <Image style={styles.IconUnselected} resizeMode="cover" source={require('@/assets/images/navbar-icons/rubber_ducktopus.png')}/>
+                    tabBarIcon: ({ focused }) => {
+                        if (focused) return <Image style={styles.IconSelected} resizeMode="cover" source={require('@/assets/images/navbar-icons/rubber_ducktopus-selected.png')} />
+                        return <Image style={styles.IconUnselected} resizeMode="cover" source={require('@/assets/images/navbar-icons/rubber_ducktopus.png')} />
                     },
                 }}
             />
@@ -56,13 +74,13 @@ const Layout = () => {
                 name="sleep"
                 options={{
                     header: () => (
-                        <Header title="Dormes"/>
+                        <Header title="Dormes" />
                     ),
                     tabBarLabel: 'Sleep',
                     tabBarShowLabel: false,
-                    tabBarIcon: ({focused}) => {
-                        if(focused) return <Image style={styles.IconSelected} resizeMode="cover" source={require('@/assets/images/navbar-icons/moon-selected.png')}/>
-                        return <Image style={styles.IconUnselected} resizeMode="cover" source={require('@/assets/images/navbar-icons/moon.png')}/>
+                    tabBarIcon: ({ focused }) => {
+                        if (focused) return <Image style={styles.IconSelected} resizeMode="cover" source={require('@/assets/images/navbar-icons/moon-selected.png')} />
+                        return <Image style={styles.IconUnselected} resizeMode="cover" source={require('@/assets/images/navbar-icons/moon.png')} />
                     },
                 }}
             />

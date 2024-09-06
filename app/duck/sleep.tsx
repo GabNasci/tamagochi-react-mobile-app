@@ -3,7 +3,7 @@ import DuckGif from "@/components/DuckGif";
 import StatusDuck, { StatusDuckEnum } from "@/components/StatusDuck";
 import { DuckDatabase, useDuckDatabase } from "@/database/useDuckDatabase";
 import { Link, useGlobalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Alert, ImageBackground, StyleSheet, Text, View } from "react-native";
 
 const Sleep = () => {
@@ -21,9 +21,26 @@ const Sleep = () => {
         }
     }
 
+    const handleSleep = useCallback(async ()=> {
+        try {
+            const updatedDuck = await duckDataBase.findById(Number(id))
+            if(!updatedDuck) return Alert.alert("Não foi possível encontrar o pato!")
+            const response = await duckDataBase.updadteAtributes({
+                hungry: updatedDuck.hungry,
+                joy: updatedDuck.joy,
+                sleep: updatedDuck.sleep - 10,
+                updated_at: updatedDuck.updated_at,
+                id: updatedDuck.id
+            })
+        } catch (error) {
+            console.log(error)
+        }
+
+    }, [duck])
+
     useEffect(() => {
         handleGetDuck(Number(id))
-    }, [])
+    }, [handleGetDuck])
 
 
 
@@ -35,9 +52,10 @@ const Sleep = () => {
                 resizeMode="cover"
                 style={styles.image}
             >
+                {/* <Text style={styles.text}>{duck.updated_at}</Text> */}
                 {duck ? (
                     <View style={styles.mainContainer}>
-                        <CardDuckPages duck={duck} nameStatus={StatusDuckEnum.Sleep}/>
+                        <CardDuckPages duck={duck} handleSleep={handleSleep} nameStatus={StatusDuckEnum.Sleep}/>
                         <DuckGif duck={duck.type} width={140}/>
                     </View>
                 ): (<View style={styles.loadingContainer}>
@@ -73,6 +91,14 @@ const styles = StyleSheet.create({
         fontFamily: 'supercell-font',
         color: "white",
         fontSize: 40,
+        textShadowColor: 'black',
+        textShadowOffset: { width: 2, height: 2 },
+        textShadowRadius: 2,
+    },
+    text: {
+        fontFamily: 'supercell-font',
+        color: "white",
+        fontSize: 10,
         textShadowColor: 'black',
         textShadowOffset: { width: 2, height: 2 },
         textShadowRadius: 2,

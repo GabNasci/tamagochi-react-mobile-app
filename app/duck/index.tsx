@@ -25,7 +25,7 @@ const Duck = () => {
 
     useEffect(() => {
         handleGetDuck(Number(id))
-    }, [])
+    }, [duck])
 
     return (
         <View style={styles.safeAreaContainer}>
