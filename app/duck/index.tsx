@@ -40,7 +40,7 @@ const Duck = () => {
                 {duck ? (
                     <View style={styles.mainContainer}>
                         <CardMenu duck={duck} />
-                        <DuckGif duck={duck.type} width={140}/>
+                        <DuckGif duck={duck.type} status={duck.status} width={140}/>
                     </View>
                 ): (<View style={styles.loadingContainer}>
                         <Text style={styles.loadingText}>Carregando...</Text>

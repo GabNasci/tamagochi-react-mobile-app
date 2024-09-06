@@ -41,7 +41,7 @@ const Joy = () => {
                 {duck ? (
                     <View style={styles.mainContainer}>
                         <CardDuckPages duck={duck} nameStatus={StatusDuckEnum.Joy}/>
-                        <DuckGif duck={duck.type} width={140} inverted={true}/>
+                        <DuckGif duck={duck.type} width={140} status={duck.status} inverted={true}/>
                     </View>
                 ): (<View style={styles.loadingContainer}>
                         <Text style={styles.loadingText}>Carregando...</Text>

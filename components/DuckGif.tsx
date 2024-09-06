@@ -23,6 +23,8 @@ const DuckGif = ({duck, width, inverted = false, status, action}: DuckGifProps) 
                 setDuckGif(selectedDuck.dead); 
             } else if (action === 'sleep') {
                 setDuckGif(selectedDuck.sleep); 
+            } else if (action === 'nope') {
+                setDuckGif(selectedDuck.nope); 
             } else if (status && status <= 150) {
                 setDuckGif(selectedDuck.cry); 
             } else {
