@@ -14,13 +14,17 @@ const Sleep = () => {
     const handleSleep = async ()=> {
         try {
             const updatedDuck = await duckDataBase.findById(Number(id))
+            
             if(!updatedDuck) return Alert.alert("Não foi possível encontrar o pato!")
+            if(updatedDuck.sleep >= 100) return Alert.alert("O pato já dormiu demais.")
+            console.log(updatedDuck.sleep)
             await duckDataBase.updateAtributes({
                 hungry: updatedDuck.hungry,
                 joy: updatedDuck.joy,
                 sleep: updatedDuck.sleep + 10,
                 id: updatedDuck.id
             })
+            
         } catch (error) {
             console.log(error)
         }

@@ -105,7 +105,6 @@ export function useDuckDatabase() {
     
         for (const duck of ducks) {
             const minutesPassed = (Date.now() - new Date(duck.updated_at).getTime()) / (1000 * 60 * 60);
-            console.log(minutesPassed, duck.id);
     
             if (Math.floor(minutesPassed) >= 1) {
 
