@@ -1,11 +1,12 @@
 import BoxDuck from "@/components/BoxDuck";
 import ButtonYellow, { ButtonColorEnum } from "@/components/ButtonYellow";
-import { useEffect, useState } from "react";
-import { Alert, ImageBackground, StyleSheet, Text, TextInput, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ImageBackground, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { generate, developerSentences } from "@/lerolero/index";
 import { useDuckDatabase } from "@/database/useDuckDatabase"
 import { router } from "expo-router";
+import ModalCustom from "@/components/ModalCustom";
 
 const CreateDuck = () => {
     const [saveLerolero, setLerolero] = useState<string>(generate(developerSentences))
@@ -13,6 +14,10 @@ const CreateDuck = () => {
     const [ducks, setDucks] = useState<string[]>(['yellow', 'mallard-duck', 'purple', 'green'])
     const [name, setName] = useState('')
     const [duckExists, setDuckExists] = useState(false)
+    const [modalVisible, setModalVisible] = useState(false);
+    const [textModal, setTextModal] = useState('');
+    const [titleModal, setTitleModal] = useState('');
+    const [redirectRouter, setRedirectRouter] = useState(false);
 
 
     const duckDatabase = useDuckDatabase()
@@ -43,11 +48,13 @@ const CreateDuck = () => {
         }
     }
 
-
     const handleCreateDuck = async () => {
-
         try {
-            if (name === "") return Alert.alert("O nome precisa ser preenchido!")
+            if (name === "") {
+                setTitleModal('Alerta');
+                setTextModal('O nome do pato 🦆 precisa ser preenchido!');
+                return setModalVisible(true);
+            }
 
             const response = await duckDatabase.create({
                 name: name,
@@ -57,10 +64,10 @@ const CreateDuck = () => {
                 joy: 50
             })
 
-            Alert.alert("Pato cadastrado!")
-            router.push("/listDucks")
-
-
+            setTitleModal('Sucesso');
+            setTextModal('O pato 🦆 foi cadastrado com sucesso!');
+            setRedirectRouter(true)
+            return setModalVisible(true);
         } catch (error) {
             console.log(error)
         }
@@ -71,6 +78,7 @@ const CreateDuck = () => {
         handleDuckExists()
     }, [])
 
+    console.log(textModal);
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
@@ -140,6 +148,16 @@ const CreateDuck = () => {
                             />
                         )}
 
+                        <ModalCustom
+                            visible={modalVisible}
+                            title={titleModal}
+                            text={textModal}
+                            onClose={
+                                () => redirectRouter ?
+                                    router.push("/listDucks") :
+                                    setModalVisible(false)
+                            }
+                        />
                     </View>
                 </View>
             </ImageBackground>
@@ -227,7 +245,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent', // Remove o fundo padrão do TextInput
         fontSize: 16, // Tamanho do texto
         fontFamily: 'supercell-font'
-
     },
 })
 
