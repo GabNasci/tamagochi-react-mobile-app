@@ -3,15 +3,17 @@ import StatusDuck, { StatusDuckEnum } from "./StatusDuck";
 import ButtonYellow, { ButtonColorEnum } from "./ButtonYellow";
 import ButtonPlay from "./ButtonPlay";
 import { DuckDatabase } from "@/database/useDuckDatabase";
-import { router } from "expo-router";
+import { Href, router } from "expo-router";
 
 type CardDuckPagesProps = {
     duck: DuckDatabase,
     nameStatus: StatusDuckEnum,
-    handleSleep?: () => {}
+    handleSleep?: () => {},
+    link1?: Href<string | object>
+    link2?: Href<string | object>
 }
 
-const CardDuckPages = ({ duck, nameStatus, handleSleep }: CardDuckPagesProps) => {
+const CardDuckPages = ({ duck, nameStatus, handleSleep, link1, link2}: CardDuckPagesProps) => {
     const { imgBackground, heightBackground } = nameStatus === StatusDuckEnum.Hunger ?
         { imgBackground: require('@/assets/images/background/backgroundCardDuckPagesSmall.png'), heightBackground: 122 } :
         { imgBackground: require('@/assets/images/background/backgroundCardDuckPages.png'), heightBackground: 220 }
@@ -34,14 +36,14 @@ const CardDuckPages = ({ duck, nameStatus, handleSleep }: CardDuckPagesProps) =>
                 
                 <View style={styles.containerJoy}>
                     <ButtonYellow
-                        onPress={() => console.log("lal")}
+                        onPress={() => router.push(link1 ? link1 : "/duck/joy")}
                         text="Jogo 01"
                         width={147}
                         height={40}
                         buttonColor={ButtonColorEnum.Yellow}
                     />
                     <ButtonYellow
-                        onPress={() => router.push("/game2")}
+                        onPress={() => router.push(link2 ? link2 : "/duck/joy")}
                         text="Jogo 02"
                         width={147}
                         height={40}

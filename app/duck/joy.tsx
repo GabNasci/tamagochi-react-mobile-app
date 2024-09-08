@@ -18,7 +18,7 @@ const Joy = () => {
             if (response) return setDuck(response)
             return Alert.alert("Pato não encontrado!")
         } catch (error) {
-            console.log(error)
+            console.log("erro aqui:" + error)
         }
     }
 
@@ -40,7 +40,7 @@ const Joy = () => {
             >
                 {duck ? (
                     <View style={styles.mainContainer}>
-                        <CardDuckPages duck={duck} nameStatus={StatusDuckEnum.Joy}/>
+                        <CardDuckPages link1={{ pathname: "/game1", params: {id: duck.id}}} link2={{ pathname: "/game2", params: {id: duck.id}}} duck={duck} nameStatus={StatusDuckEnum.Joy}/>
                         <DuckGif duck={duck.type} width={140} status={duck.status} inverted={true}/>
                     </View>
                 ): (<View style={styles.loadingContainer}>

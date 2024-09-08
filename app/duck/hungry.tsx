@@ -24,7 +24,6 @@ const Hungry = () => {
                 setTimeout(() => setAnimation(""), 2000)
                 return Alert.alert("O pato comeu demais.")
             }
-            console.log(updatedDuck.sleep)
             await duckDataBase.updateAtributes({
                 hungry: updatedDuck.hungry + 10,
                 joy: updatedDuck.joy,
@@ -44,6 +43,7 @@ const Hungry = () => {
             const response = await duckDataBase.findById(id)
             if (response) return setDuck(response)
             return Alert.alert("Pato não encontrado!")
+        
         } catch (error) {
             console.log(error)
         }

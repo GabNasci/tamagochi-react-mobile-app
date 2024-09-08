@@ -104,8 +104,7 @@ export function useDuckDatabase() {
         const ducks = await getAll();
     
         for (const duck of ducks) {
-            const minutesPassed = (Date.now() - new Date(duck.updated_at).getTime()) / (1000 * 60 * 60);
-    
+            const minutesPassed = (Date.now() - new Date(duck.updated_at).getTime()) / (1000 * 60);
             if (Math.floor(minutesPassed) >= 1) {
 
                 const statement = await database.prepareAsync(
@@ -117,7 +116,7 @@ export function useDuckDatabase() {
                         $hungry: Math.max(0, duck.hungry - Math.floor(minutesPassed) * 10),
                         $joy: Math.max(0, duck.joy - Math.floor(minutesPassed) * 10),
                         $sleep: Math.max(0, duck.sleep - Math.floor(minutesPassed) * 10),
-                        $updated_at: new Date().toISOString(), // Atualiza com a data atual
+                        $updated_at: new Date().toISOString(),
                         $id: duck.id
                     });
                 } catch (error) {
