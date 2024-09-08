@@ -3,6 +3,7 @@ import StatusDuck, { StatusDuckEnum } from "./StatusDuck";
 import ButtonYellow, { ButtonColorEnum } from "./ButtonYellow";
 import ButtonPlay from "./ButtonPlay";
 import { DuckDatabase } from "@/database/useDuckDatabase";
+import { router } from "expo-router";
 
 type CardDuckPagesProps = {
     duck: DuckDatabase,
@@ -33,14 +34,14 @@ const CardDuckPages = ({ duck, nameStatus, handleSleep }: CardDuckPagesProps) =>
                 
                 <View style={styles.containerJoy}>
                     <ButtonYellow
-                        onPress={() => console.log('Jogo 01')}
+                        onPress={() => console.log("lal")}
                         text="Jogo 01"
                         width={147}
                         height={40}
                         buttonColor={ButtonColorEnum.Yellow}
                     />
                     <ButtonYellow
-                        onPress={() => console.log('Jogo 02')}
+                        onPress={() => router.push("/game2")}
                         text="Jogo 02"
                         width={147}
                         height={40}

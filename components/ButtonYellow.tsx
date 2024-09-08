@@ -8,7 +8,7 @@ export enum ButtonColorEnum {
 
 type ButtonYellow = {
     onPress: () => void
-    text: string
+    text: string,
     width: number,
     height: number,
     buttonColor: ButtonColorEnum,
