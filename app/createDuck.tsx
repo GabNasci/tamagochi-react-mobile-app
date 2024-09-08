@@ -1,11 +1,10 @@
 import BoxDuck from "@/components/BoxDuck";
-import ButtonPlay from "@/components/ButtonPlay";
 import ButtonYellow, { ButtonColorEnum } from "@/components/ButtonYellow";
 import { useEffect, useState } from "react";
-import { Alert, Button, Image, ImageBackground, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, ImageBackground, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { generate, developerSentences } from "@/lerolero/index";
-import { DuckType, useDuckDatabase } from "@/database/useDuckDatabase"
+import { useDuckDatabase } from "@/database/useDuckDatabase"
 import { router } from "expo-router";
 
 const CreateDuck = () => {
@@ -171,6 +170,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         justifyContent: 'center',
         alignItems: 'center',
+        gap: 15,
     },
     image: {
         flex: 1,
