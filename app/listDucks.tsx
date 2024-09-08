@@ -1,14 +1,11 @@
-import BoxDuck from "@/components/BoxDuck";
+import ButtonCreate from "@/components/ButtonCreate";
 import CardDuck from "@/components/CardDuck";
-import { DuckDatabase, DuckType, useDuckDatabase } from "@/database/useDuckDatabase";
-import { Link, router } from "expo-router";
+import { DuckDatabase, useDuckDatabase } from "@/database/useDuckDatabase";
 import { useEffect, useState } from "react";
-import { Alert, ImageBackground, StyleSheet, Text, FlatList, View, Button } from "react-native";
+import { ImageBackground, StyleSheet, Text, FlatList, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const ListDucks = () => {
-
-
     const duckDatabase = useDuckDatabase()
     const [ducks, setDucks] = useState<DuckDatabase[]>([])
 
@@ -38,16 +35,14 @@ const ListDucks = () => {
             >
                 <View style={styles.container}>
                     <View style={styles.headerContainer}>
-                            <Text style={styles.text}>Os Patos</Text>
-                        </View>
-                    <FlatList 
+                        <Text style={styles.text}>Os Patos</Text>
+                    </View>
+                    <FlatList
                         data={ducks}
                         keyExtractor={item => String(item.id)}
-                        renderItem={({item}) => <CardDuck duck={item}/>}
+                        renderItem={({ item }) => <CardDuck duck={item} />}
                     />
-                    <View style={{padding: 40}}>
-                        <Button onPress={() => router.push("/createDuck")} title="Criar"></Button>
-                    </View>
+                    <ButtonCreate />
                 </View>
             </ImageBackground>
         </SafeAreaView>
@@ -74,15 +69,16 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: 'center',
         paddingVertical: 24,
-
-
     },
     text: {
         fontFamily: 'supercell-font',
         color: "white",
         fontSize: 40,
     },
-
+    buttonCreate: {
+        paddingTop: 44,
+        paddingBottom: 44,
+    },
 })
 
 export default ListDucks;
