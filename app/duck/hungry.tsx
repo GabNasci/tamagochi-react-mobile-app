@@ -3,8 +3,8 @@ import CardDuckPages from "@/components/CardDuckPages";
 import DuckGif from "@/components/DuckGif";
 import { StatusDuckEnum } from "@/components/StatusDuck";
 import { DuckDatabase, useDuckDatabase } from "@/database/useDuckDatabase";
-import { useGlobalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { Link, useFocusEffect, useGlobalSearchParams } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { Alert, ImageBackground, StyleSheet, Text, View } from "react-native";
 
 const Hungry = () => {
@@ -15,17 +15,20 @@ const Hungry = () => {
 
     const handleGetDuck = async (id: number) => {
         try {
+            await duckDataBase.updateAtributesByTime()
             const response = await duckDataBase.findById(id)
-            if(response) return setDuck(response)
+            if (response) return setDuck(response)
             return Alert.alert("Pato não encontrado!")
         } catch (error) {
             console.log(error)
         }
     }
 
-    useEffect(() => {
-        handleGetDuck(Number(id))
-    }, [])
+    useFocusEffect(
+        useCallback(() => {
+            handleGetDuck(Number(id))
+        }, [duck])
+    );
 
     return (
         <View style={styles.safeAreaContainer}>
@@ -35,19 +38,15 @@ const Hungry = () => {
                 style={styles.image}
             >
                 {duck ? (
-                    <>
-                        <View style={styles.mainContainer}>
-                            <CardDuckPages duck={duck} nameStatus={StatusDuckEnum.Hunger} />
-                            <DuckGif duck={duck.type} width={140} screen="hungry" />
-                        </View>
-                        <View style={styles.boxHungry}>
-                            <BoxHungry />
-                        </View>
-                    </>
-                ) : (<View style={styles.loadingContainer}>
-                    <Text style={styles.loadingText}>Carregando...</Text>
-                </View>
-                )}
+                    <View style={styles.mainContainer}>
+                        <CardDuckPages duck={duck} nameStatus={StatusDuckEnum.Hunger}/>
+                        <DuckGif duck={duck.type} width={140} status={duck.status} action="hungry"/>
+                    </View>
+                ): (<View style={styles.loadingContainer}>
+                        <Text style={styles.loadingText}>Carregando...</Text>
+                    </View>
+                    )
+                }
             </ImageBackground>
         </View>
     );

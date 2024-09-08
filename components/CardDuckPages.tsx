@@ -1,4 +1,4 @@
-import { ImageBackground, StyleSheet, Text, View } from "react-native";
+import { Alert, ImageBackground, StyleSheet, Text, View } from "react-native";
 import StatusDuck, { StatusDuckEnum } from "./StatusDuck";
 import ButtonYellow, { ButtonColorEnum } from "./ButtonYellow";
 import ButtonPlay from "./ButtonPlay";
@@ -6,10 +6,11 @@ import { DuckDatabase } from "@/database/useDuckDatabase";
 
 type CardDuckPagesProps = {
     duck: DuckDatabase,
-    nameStatus: StatusDuckEnum
+    nameStatus: StatusDuckEnum,
+    handleSleep?: () => {}
 }
 
-const CardDuckPages = ({ duck, nameStatus }: CardDuckPagesProps) => {
+const CardDuckPages = ({ duck, nameStatus, handleSleep }: CardDuckPagesProps) => {
     const { imgBackground, heightBackground } = nameStatus === StatusDuckEnum.Hunger ?
         { imgBackground: require('@/assets/images/background/backgroundCardDuckPagesSmall.png'), heightBackground: 122 } :
         { imgBackground: require('@/assets/images/background/backgroundCardDuckPages.png'), heightBackground: 220 }
@@ -49,7 +50,7 @@ const CardDuckPages = ({ duck, nameStatus }: CardDuckPagesProps) => {
             ) : nameStatus === StatusDuckEnum.Sleep ? (
                 <View style={styles.containerSleep}>
                     <ButtonYellow
-                        onPress={() => console.log('Dormir')}
+                        onPress={handleSleep ? handleSleep : () => Alert.alert("Erro ao executar a função!")}
                         text="Dormir"
                         width={147}
                         height={40}

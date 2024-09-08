@@ -1,33 +1,36 @@
 import BoxDuck from "@/components/BoxDuck";
 import CardDuck from "@/components/CardDuck";
+
 import { DuckDatabase, DuckType, useDuckDatabase } from "@/database/useDuckDatabase";
-import { Link, router } from "expo-router";
-import { useEffect, useState } from "react";
+import { Link, router, useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { Alert, ImageBackground, StyleSheet, Text, FlatList, View, Button } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const ListDucks = () => {
 
-
     const duckDatabase = useDuckDatabase()
     const [ducks, setDucks] = useState<DuckDatabase[]>([])
 
-
     const getAllDucks = async () => {
-
         try {
+            await duckDatabase.updateAtributesByTime()
             const response = await duckDatabase.getAll()
             setDucks(response)
 
         } catch (error) {
             console.log(error)
         }
-        
     }
 
-    useEffect(() => {
-        getAllDucks()
-    }, [ducks])
+
+
+    
+    useFocusEffect(
+        useCallback(() => {
+            getAllDucks();
+        }, [ducks])
+    );
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>

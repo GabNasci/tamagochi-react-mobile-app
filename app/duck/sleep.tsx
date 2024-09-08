@@ -2,8 +2,8 @@ import CardDuckPages from "@/components/CardDuckPages";
 import DuckGif from "@/components/DuckGif";
 import StatusDuck, { StatusDuckEnum } from "@/components/StatusDuck";
 import { DuckDatabase, useDuckDatabase } from "@/database/useDuckDatabase";
-import { Link, useGlobalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { Link, useFocusEffect, useGlobalSearchParams } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import { Alert, ImageBackground, StyleSheet, Text, View } from "react-native";
 
 const Sleep = () => {
@@ -11,19 +11,42 @@ const Sleep = () => {
     const {id} = useGlobalSearchParams()
     const [duck, setDuck] = useState<DuckDatabase>()
 
+    const handleSleep = async ()=> {
+        try {
+            const updatedDuck = await duckDataBase.findById(Number(id))
+            
+            if(!updatedDuck) return Alert.alert("Não foi possível encontrar o pato!")
+            if(updatedDuck.sleep >= 100) return Alert.alert("O pato já dormiu demais.")
+            console.log(updatedDuck.sleep)
+            await duckDataBase.updateAtributes({
+                hungry: updatedDuck.hungry,
+                joy: updatedDuck.joy,
+                sleep: updatedDuck.sleep + 10,
+                id: updatedDuck.id
+            })
+            
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
+
     const handleGetDuck = async (id: number) => {
         try {
+            await duckDataBase.updateAtributesByTime()
             const response = await duckDataBase.findById(id)
-            if(response) return setDuck(response)
+            if (response) return setDuck(response)
             return Alert.alert("Pato não encontrado!")
         } catch (error) {
             console.log(error)
         }
     }
 
-    useEffect(() => {
-        handleGetDuck(Number(id))
-    }, [])
+    useFocusEffect(
+        useCallback(() => {
+            handleGetDuck(Number(id))
+        }, [duck])
+    );
 
 
 
@@ -35,10 +58,11 @@ const Sleep = () => {
                 resizeMode="cover"
                 style={styles.image}
             >
+                {/* <Text style={styles.text}>{duck.updated_at}</Text> */}
                 {duck ? (
                     <View style={styles.mainContainer}>
-                        <CardDuckPages duck={duck} nameStatus={StatusDuckEnum.Sleep}/>
-                        <DuckGif duck={duck.type} width={140}/>
+                        <CardDuckPages duck={duck} handleSleep={handleSleep} nameStatus={StatusDuckEnum.Sleep}/>
+                        <DuckGif duck={duck.type} status={duck.status} width={140}/>
                     </View>
                 ): (<View style={styles.loadingContainer}>
                         <Text style={styles.loadingText}>Carregando...</Text>
@@ -73,6 +97,14 @@ const styles = StyleSheet.create({
         fontFamily: 'supercell-font',
         color: "white",
         fontSize: 40,
+        textShadowColor: 'black',
+        textShadowOffset: { width: 2, height: 2 },
+        textShadowRadius: 2,
+    },
+    text: {
+        fontFamily: 'supercell-font',
+        color: "white",
+        fontSize: 10,
         textShadowColor: 'black',
         textShadowOffset: { width: 2, height: 2 },
         textShadowRadius: 2,
