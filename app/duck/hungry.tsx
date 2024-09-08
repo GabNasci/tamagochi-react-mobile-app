@@ -1,24 +1,26 @@
 import BoxHungry from "@/components/BoxHungry";
 import CardDuckPages from "@/components/CardDuckPages";
 import DuckGif from "@/components/DuckGif";
+import ModalCustom from "@/components/ModalCustom";
 import { StatusDuckEnum } from "@/components/StatusDuck";
 import { DuckDatabase, useDuckDatabase } from "@/database/useDuckDatabase";
 import { Link, useFocusEffect, useGlobalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { Alert, ImageBackground, StyleSheet, Text, View } from "react-native";
+import { ImageBackground, StyleSheet, Text, View } from "react-native";
 
 const Hungry = () => {
 
     const duckDataBase = useDuckDatabase()
     const {id} = useGlobalSearchParams()
     const [duck, setDuck] = useState<DuckDatabase>()
+    const [modalVisible, setModalVisible] = useState(false);
 
     const handleGetDuck = async (id: number) => {
         try {
             await duckDataBase.updateAtributesByTime()
             const response = await duckDataBase.findById(id)
             if (response) return setDuck(response)
-            return Alert.alert("Pato não encontrado!")
+            return setModalVisible(true)
         } catch (error) {
             console.log(error)
         }
@@ -47,6 +49,14 @@ const Hungry = () => {
                     </View>
                     )
                 }
+                <ModalCustom
+                    visible={modalVisible}
+                    title='Alerta'
+                    text='Não foi possível encontrar o pato 🦆!'
+                    onClose={
+                        () => setModalVisible(false)
+                    }
+                />
             </ImageBackground>
         </View>
     );

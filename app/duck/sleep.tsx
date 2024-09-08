@@ -1,22 +1,31 @@
 import CardDuckPages from "@/components/CardDuckPages";
 import DuckGif from "@/components/DuckGif";
+import ModalCustom from "@/components/ModalCustom";
 import StatusDuck, { StatusDuckEnum } from "@/components/StatusDuck";
 import { DuckDatabase, useDuckDatabase } from "@/database/useDuckDatabase";
 import { Link, useFocusEffect, useGlobalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { Alert, ImageBackground, StyleSheet, Text, View } from "react-native";
+import { ImageBackground, StyleSheet, Text, View } from "react-native";
 
 const Sleep = () => {
     const duckDataBase = useDuckDatabase()
     const {id} = useGlobalSearchParams()
     const [duck, setDuck] = useState<DuckDatabase>()
+    const [modalVisible, setModalVisible] = useState(false);
+    const [textModal, setTextModal] = useState('');
 
     const handleSleep = async ()=> {
         try {
             const updatedDuck = await duckDataBase.findById(Number(id))
             
-            if(!updatedDuck) return Alert.alert("Não foi possível encontrar o pato!")
-            if(updatedDuck.sleep >= 100) return Alert.alert("O pato já dormiu demais.")
+            if(!updatedDuck) {
+                setTextModal('Não foi possível encontrar o pato 🦆!')
+                return setModalVisible(true)
+            }
+            if (updatedDuck.sleep >= 100) {
+                setTextModal('O pato 🦆 já dormiu demais.')
+                return setModalVisible(true)
+            }
             console.log(updatedDuck.sleep)
             await duckDataBase.updateAtributes({
                 hungry: updatedDuck.hungry,
@@ -36,7 +45,8 @@ const Sleep = () => {
             await duckDataBase.updateAtributesByTime()
             const response = await duckDataBase.findById(id)
             if (response) return setDuck(response)
-            return Alert.alert("Pato não encontrado!")
+            setTextModal('Não foi possível encontrar o pato 🦆!')
+            return setModalVisible(true)
         } catch (error) {
             console.log(error)
         }
@@ -70,6 +80,14 @@ const Sleep = () => {
                     )
                 }
             </ImageBackground>
+            <ModalCustom
+                visible={modalVisible}
+                title='Alerta'
+                text={textModal}
+                onClose={
+                    () => setModalVisible(false)
+                }
+            />
         </View>
     );
 }
