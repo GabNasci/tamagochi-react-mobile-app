@@ -26,7 +26,7 @@ const ModalCustom = ({ visible, title, text, onClose }: ModalCustomType) => {
           <Text style={styles.message}>
             {text}
           </Text>
-          <View style={styles.buttonContainerLal}>
+          <View style={styles.buttonContainer}>
             <ButtonYellow
               onPress={onClose}
               buttonColor={ButtonColorEnum.Orange}
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     fontFamily: 'supercell-font',
     color: "white",
   },
-  buttonContainerLal: {
+  buttonContainer: {
     flexDirection: 'row',
   },
   button: {
