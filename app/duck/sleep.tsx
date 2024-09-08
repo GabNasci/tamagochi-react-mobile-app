@@ -10,6 +10,7 @@ const Sleep = () => {
     const duckDataBase = useDuckDatabase()
     const {id} = useGlobalSearchParams()
     const [duck, setDuck] = useState<DuckDatabase>()
+    const [animation, setAnimation] = useState<string>("")
 
     const handleSleep = async ()=> {
         try {
@@ -17,13 +18,14 @@ const Sleep = () => {
             
             if(!updatedDuck) return Alert.alert("Não foi possível encontrar o pato!")
             if(updatedDuck.sleep >= 100) return Alert.alert("O pato já dormiu demais.")
-            console.log(updatedDuck.sleep)
+            setAnimation("sleep")
             await duckDataBase.updateAtributes({
                 hungry: updatedDuck.hungry,
                 joy: updatedDuck.joy,
                 sleep: updatedDuck.sleep + 10,
                 id: updatedDuck.id
             })
+            setTimeout(() => setAnimation(""), 3000)
             
         } catch (error) {
             console.log(error)
@@ -58,11 +60,10 @@ const Sleep = () => {
                 resizeMode="cover"
                 style={styles.image}
             >
-                {/* <Text style={styles.text}>{duck.updated_at}</Text> */}
                 {duck ? (
                     <View style={styles.mainContainer}>
                         <CardDuckPages duck={duck} handleSleep={handleSleep} nameStatus={StatusDuckEnum.Sleep}/>
-                        <DuckGif duck={duck.type} status={duck.status} width={140}/>
+                        <DuckGif duck={duck.type} status={duck.status} width={140} action={animation}/>
                     </View>
                 ): (<View style={styles.loadingContainer}>
                         <Text style={styles.loadingText}>Carregando...</Text>

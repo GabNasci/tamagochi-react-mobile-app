@@ -2,7 +2,11 @@ import { foodImage } from "@/mock";
 import { useState } from "react";
 import { Image, ImageBackground, StyleSheet, TouchableOpacity } from "react-native";
 
-const BoxHungry = () => {
+type BoxHungryProps = {
+  onPress: () => void
+}
+
+const BoxHungry = ({onPress} : BoxHungryProps) => {
   const [foodNumber, setFoodNumber] = useState<number>(0)
 
   function NextFood(foodIndex: number): number {
@@ -12,6 +16,7 @@ const BoxHungry = () => {
 
   const handleChangeDuck = () => {
     setFoodNumber(NextFood(foodNumber))
+    onPress()
   }
 
   return (

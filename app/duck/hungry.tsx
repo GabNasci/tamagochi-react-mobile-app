@@ -10,8 +10,33 @@ import { Alert, ImageBackground, StyleSheet, Text, View } from "react-native";
 const Hungry = () => {
 
     const duckDataBase = useDuckDatabase()
-    const {id} = useGlobalSearchParams()
+    const { id } = useGlobalSearchParams()
     const [duck, setDuck] = useState<DuckDatabase>()
+    const [animation, setAnimation] = useState<string>("")
+
+    const handleEat = async ()=> {
+        try {
+            const updatedDuck = await duckDataBase.findById(Number(id))
+            
+            if(!updatedDuck) return Alert.alert("Não foi possível encontrar o pato!")
+            if(updatedDuck.hungry >= 100) {
+                setAnimation("nope")
+                setTimeout(() => setAnimation(""), 2000)
+                return Alert.alert("O pato comeu demais.")
+            }
+            console.log(updatedDuck.sleep)
+            await duckDataBase.updateAtributes({
+                hungry: updatedDuck.hungry + 10,
+                joy: updatedDuck.joy,
+                sleep: updatedDuck.sleep,
+                id: updatedDuck.id
+            })
+            
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
 
     const handleGetDuck = async (id: number) => {
         try {
@@ -38,14 +63,19 @@ const Hungry = () => {
                 style={styles.image}
             >
                 {duck ? (
-                    <View style={styles.mainContainer}>
-                        <CardDuckPages duck={duck} nameStatus={StatusDuckEnum.Hunger}/>
-                        <DuckGif duck={duck.type} width={140} status={duck.status} action="hungry"/>
-                    </View>
-                ): (<View style={styles.loadingContainer}>
-                        <Text style={styles.loadingText}>Carregando...</Text>
-                    </View>
-                    )
+                    <>
+                        <View style={styles.mainContainer}>
+                            <CardDuckPages duck={duck} nameStatus={StatusDuckEnum.Hunger} />
+                            <DuckGif duck={duck.type} width={140} status={duck.status} action={animation} />
+                        </View>
+                        <View style={styles.boxHungry}>
+                            <BoxHungry onPress={handleEat}/>
+                        </View>
+                    </>
+                ) : (<View style={styles.loadingContainer}>
+                    <Text style={styles.loadingText}>Carregando...</Text>
+                </View>
+                )
                 }
             </ImageBackground>
         </View>
