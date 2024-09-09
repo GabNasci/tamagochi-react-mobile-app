@@ -9,11 +9,13 @@ type CardDuckPagesProps = {
     duck: DuckDatabase,
     nameStatus: StatusDuckEnum,
     handleSleep?: () => {},
+    handleGame1?: () => void,
+    handleGame2?: () => void,
     link1?: Href<string | object>
     link2?: Href<string | object>
 }
 
-const CardDuckPages = ({ duck, nameStatus, handleSleep, link1, link2}: CardDuckPagesProps) => {
+const CardDuckPages = ({ duck, nameStatus, handleSleep, link1, link2, handleGame1, handleGame2}: CardDuckPagesProps) => {
     const { imgBackground, heightBackground } = nameStatus === StatusDuckEnum.Hunger ?
         { imgBackground: require('@/assets/images/background/backgroundCardDuckPagesSmall.png'), heightBackground: 122 } :
         { imgBackground: require('@/assets/images/background/backgroundCardDuckPages.png'), heightBackground: 220 }
@@ -36,14 +38,14 @@ const CardDuckPages = ({ duck, nameStatus, handleSleep, link1, link2}: CardDuckP
                 
                 <View style={styles.containerJoy}>
                     <ButtonYellow
-                        onPress={() => router.push(link1 ? link1 : "/duck/joy")}
+                        onPress={handleGame1 ? handleGame1 : () => console.log("Jogo 01")}
                         text="Jogo 01"
                         width={147}
                         height={40}
                         buttonColor={ButtonColorEnum.Yellow}
                     />
                     <ButtonYellow
-                        onPress={() => router.push(link2 ? link2 : "/duck/joy")}
+                        onPress={handleGame2 ? handleGame2 : () => console.log("Jogo 01")}
                         text="Jogo 02"
                         width={147}
                         height={40}

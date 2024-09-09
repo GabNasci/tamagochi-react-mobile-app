@@ -3,7 +3,7 @@ import DuckGif from "@/components/DuckGif";
 import ModalCustom from "@/components/ModalCustom";
 import StatusDuck, { StatusDuckEnum } from "@/components/StatusDuck";
 import { DuckDatabase, useDuckDatabase } from "@/database/useDuckDatabase";
-import { Link, useFocusEffect, useGlobalSearchParams } from "expo-router";
+import { Link, router, useFocusEffect, useGlobalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { ImageBackground, StyleSheet, Text, View } from "react-native";
 
@@ -12,6 +12,33 @@ const Joy = () => {
     const {id} = useGlobalSearchParams()
     const [duck, setDuck] = useState<DuckDatabase>()
     const [modalVisible, setModalVisible] = useState(false);
+    const [textModal, setTextModal] = useState('');
+
+    const handleJoy = async (gameNumber: number)=> {
+        try {
+            const updatedDuck = await duckDataBase.findById(Number(id))
+            
+            if(!updatedDuck) {
+                setTextModal('Não foi possível encontrar o pato 🦆!')
+                return setModalVisible(true)
+            }
+            if (updatedDuck.sleep >= 100) {
+                setTextModal('O pato 🦆 já brincou demais.')
+                return setModalVisible(true)
+            }
+            await duckDataBase.updateAtributes({
+                hungry: updatedDuck.hungry,
+                joy: updatedDuck.joy + 10,
+                sleep: updatedDuck.sleep,
+                id: updatedDuck.id
+            })
+            router.push({ pathname: gameNumber === 1 ? "/game1" : "/game2", params: { id: id } })
+            
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
 
     const handleGetDuck = async (id: number) => {
         try {
@@ -42,7 +69,7 @@ const Joy = () => {
             >
                 {duck ? (
                     <View style={styles.mainContainer}>
-                        <CardDuckPages link1={{ pathname: "/game1", params: {id: duck.id}}} link2={{ pathname: "/game2", params: {id: duck.id}}} duck={duck} nameStatus={StatusDuckEnum.Joy}/>
+                        <CardDuckPages handleGame1={() => handleJoy(1)} handleGame2={() => handleJoy(2)} duck={duck} nameStatus={StatusDuckEnum.Joy}/>
                         <DuckGif duck={duck.type} width={140} status={duck.status} inverted={true}/>
                     </View>
                 ): (<View style={styles.loadingContainer}>

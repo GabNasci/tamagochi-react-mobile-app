@@ -1,193 +1,270 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import ButtonYellow, { ButtonColorEnum } from "@/components/ButtonYellow";
-import { router, useFocusEffect, useGlobalSearchParams } from "expo-router";
-import { Image, ImageBackground, StyleSheet, Text, Dimensions } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import * as ScreenOrientation from "expo-screen-orientation";
-import { Accelerometer } from 'expo-sensors';
-import { System } from 'detect-collisions'; // Importa a biblioteca de colisões
+import { Button, Platform, StyleSheet, useWindowDimensions } from 'react-native';
+import {
+    Canvas,
+    useImage,
+    Image,
+    Group,
+    Text,
+    matchFont,
+} from '@shopify/react-native-skia';
+import {
+    useSharedValue,
+    withTiming,
+    Easing,
+    withSequence,
+    cancelAnimation,
+    useAnimatedReaction,
+    useDerivedValue,
+    interpolate,
+    Extrapolation,
+    useFrameCallback,
+    runOnJS,
+} from 'react-native-reanimated';
+import { useEffect, useState } from 'react';
+import {
+    GestureHandlerRootView,
+    GestureDetector,
+    Gesture,
+} from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import ButtonYellow, { ButtonColorEnum } from '@/components/ButtonYellow';
+import { router, useGlobalSearchParams } from 'expo-router';
 
-// Obtém a altura da tela
+const GRAVITY = 1000;
+const JUMP_FORCE = -500;
 
-const { height, width } = Dimensions.get('window');
-type Target = {
-    id: number;
+const pipeWidth = 104;
+const pipeHeight = 640;
+
+interface Point {
     x: number;
     y: number;
 }
 
-const Game1 = () => {
+interface Rect {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+}
+
+const App: React.FC = () => {
+    const { width, height } = useWindowDimensions();
+    const [score, setScore] = useState(0);
 
     const { id } = useGlobalSearchParams()
-    const [positionY, setPositionY] = useState(height / 2);  // Posição vertical do pato
-    const [gameStarted, setGameStarted] = useState(false);
-    const [targets, setTargets] = useState<Target[]>([]);  // Estado para armazenar os targets
-    const [targetIntervalId, setTargetIntervalId] = useState<NodeJS.Timeout | null>(null);
-    const [collisionDetected, setCollisionDetected] = useState(false);
 
-    const system = new System();
+    const bg = useImage(require('@/assets/images/background_hungry.png'));
+    const bird = useImage(require('@/assets/images/game-1/white-fly-animation.gif'));
+    const pipeBottom = useImage(require('@/assets/images/sprites/pipe-green.png'));
+    const pipeTop = useImage(require('@/assets/images/sprites/pipe-green-top.png'));
+    const base = useImage(require('@/assets/images/sprites/base.png'));
 
-    const handleBack = () => {
-        router.push({
-            pathname: "/duck/joy",
-            params: { id: id }
-        });
-        setGameStarted(false)
-        Accelerometer.removeAllListeners()
-        if (targetIntervalId) {
-            clearInterval(targetIntervalId);
-        }
-    };
+    const gameOver = useSharedValue(false);
+    const pipeX = useSharedValue(width);
 
+    const birdY = useSharedValue(height / 3);
+    const birdX = width / 4;
+    const birdYVelocity = useSharedValue(0);
 
-    const checkCollision = (duckY: number, duckHeight: number, targetX: number, targetY: number, targetHeight: number) => {
-        const duckCollider = system.createCircle({ x: -200, y: duckY }, duckHeight / 2); // Exemplo de posição fixa no eixo X
-        const targetCollider = system.createCircle({ x: targetX, y: targetY }, targetHeight / 2);
-        console.log(duckCollider)
-        // Detecta colisão entre o pato e o alvo
-        const response = system.checkCollision(duckCollider, targetCollider);
-        return response;
-    };
+    const pipeOffset = useSharedValue(0);
+    const topPipeY = useDerivedValue(() => pipeOffset.value - 320);
+    const bottomPipeY = useDerivedValue(() => height - 320 + pipeOffset.value);
 
+    const pipesSpeed = useDerivedValue(() => {
+        return interpolate(score, [0, 20], [1, 2]);
+    });
 
-
-
-    const generateAndMoveTargets = () => {
-        const minY = 64; // 64px da borda superior
-        const maxY = height - 64; // 64px da borda inferior
-
-        const generateSingleTarget = () => {
-            return {
-                id: Math.random(),
-                x: width,  // Inicializa na borda direita da tela
-                y: Math.random() * (maxY - minY) + minY  // Posição Y entre minY e maxY
-            };
-        };
-
-        const generateTargets = () => {
-            // Gera o primeiro target imediatamente
-            const firstTarget = generateSingleTarget();
-            setTargets(prevTargets => [...prevTargets, firstTarget]);
-
-            // Gera o segundo target após um tempo aleatório entre 500ms e 1500ms
-            const delay = Math.random() * 1000 + 500; // Tempo entre 500ms e 1500ms
-            setTimeout(() => {
-                const secondTarget = generateSingleTarget();
-                setTargets(prevTargets => [...prevTargets, secondTarget]);
-            }, delay);
-        };
-
-        // Função que move os targets a cada intervalo
-        const moveTargets = setInterval(() => {
-            setTargets((prevTargets) => {
-                const movedTargets = prevTargets.map(target => ({
-                    ...target,
-                    x: target.x - 4 // Move o target mais rápido, mudando 4 unidades em vez de 2
-                })).filter(target => target.x > -64); // Remove se sair da tela (esquerda)
-
-                // Verifica colisão para cada target
-                movedTargets.forEach(target => {
-                    const hasCollided = checkCollision(positionY, 64,target.x, target.y, 64); // 64 é o tamanho do pato e do target
-                    if (hasCollided) {
-                        console.log("Colidiu");
-                        setCollisionDetected(true);
-                    }
-                });
-
-                if (movedTargets.length === 0) {
-                    generateTargets();
-                }
-
-                return movedTargets;
-            });
-        }, 50); // Intervalo de 50ms para mover os targets
-
-        setTargetIntervalId(moveTargets);  // Guarda o intervalo para ser limpo posteriormente
-    };
+    const obstacles = useDerivedValue(() => [
+        {
+            x: pipeX.value,
+            y: bottomPipeY.value,
+            h: pipeHeight,
+            w: pipeWidth,
+        },
+        {
+            x: pipeX.value,
+            y: topPipeY.value,
+            h: pipeHeight,
+            w: pipeWidth,
+        },
+    ]);
 
     useEffect(() => {
-        if (gameStarted) {
-            generateAndMoveTargets();
+        moveTheMap();
+    }, []);
 
-            const accelerometerSubscription = Accelerometer.addListener((data) => {
-                const { x, y, z } = data;
-                // Cálculo da nova posição vertical e horizontal
-                let newPositionY = (-x * 500) + height / 2; // Ajusta para começar no meio
-                // Limita o pato para não ultrapassar as bordas da tela (vertical)
-                newPositionY = Math.max(height - (height + 16), Math.min(newPositionY, height));  // 64 é a altura do pato
-                // Limita o pato para não ultrapassar as bordas da tela (horizontal)
-                setPositionY(newPositionY);  // Define a nova posição vertical do pato
-            });
+    const moveTheMap = () => {
+        pipeX.value = withSequence(
+            withTiming(width, { duration: 0 }),
+            withTiming(-150, {
+                duration: 3000 / pipesSpeed.value,
+                easing: Easing.linear,
+            }),
+            withTiming(width, { duration: 0 })
+        );
+    };
 
-            // Define o intervalo de atualização do acelerômetro
-            Accelerometer.setUpdateInterval(100);
+    const isPointCollidingWithRect = (point: Point, rect: Rect) => {
+        'worklet';
+        return (
+            point.x >= rect.x &&
+            point.x <= rect.x + rect.w &&
+            point.y >= rect.y &&
+            point.y <= rect.y + rect.h
+        );
+    };
+
+    useAnimatedReaction(
+        () => pipeX.value,
+        (currentValue, previousValue) => {
+            const middle = birdX;
+
+            if (previousValue && currentValue < -100 && previousValue > -100) {
+                pipeOffset.value = Math.random() * 400 - 200;
+                cancelAnimation(pipeX);
+                runOnJS(moveTheMap)();
+            }
+
+            if (
+                currentValue !== previousValue &&
+                previousValue &&
+                currentValue <= middle &&
+                previousValue > middle
+            ) {
+                runOnJS(setScore)(score + 1);
+            }
         }
-    }, [gameStarted]);
-
-
-    useFocusEffect(
-        useCallback(() => {
-            Accelerometer.setUpdateInterval(100); // Atualiza a cada 100ms
-        }, [])
     );
 
+    useAnimatedReaction(
+        () => birdY.value,
+        (currentValue) => {
+            const center = {
+                x: birdX + 32,
+                y: birdY.value + 24,
+            };
 
+            if (currentValue > height - 100 || currentValue < 0) {
+                gameOver.value = true;
+            }
 
+            const isColliding = obstacles.value.some((rect) =>
+                isPointCollidingWithRect(center, rect)
+            );
+            if (isColliding) {
+                gameOver.value = true;
+            }
+        }
+    );
 
+    useAnimatedReaction(
+        () => gameOver.value,
+        (currentValue, previousValue) => {
+            if (currentValue && !previousValue) {
+                cancelAnimation(pipeX);
+            }
+        }
+    );
 
+    useFrameCallback(({ timeSincePreviousFrame: dt }) => {
+        if (!dt || gameOver.value) {
+            return;
+        }
+        birdY.value = birdY.value + (birdYVelocity.value * dt) / 1000;
+        birdYVelocity.value = birdYVelocity.value + (GRAVITY * dt) / 1000;
+    });
+
+    const restartGame = () => {
+        'worklet';
+        birdY.value = height / 3;
+        birdYVelocity.value = 0;
+        gameOver.value = false;
+        pipeX.value = width;
+        runOnJS(moveTheMap)();
+        runOnJS(setScore)(0);
+    };
+
+    const gesture = Gesture.Tap().onStart(() => {
+        if (gameOver.value) {
+            restartGame();
+        } else {
+            birdYVelocity.value = JUMP_FORCE;
+        }
+    });
+
+    const birdTransform = useDerivedValue(() => {
+        return [
+            {
+                rotate: interpolate(
+                    birdYVelocity.value,
+                    [-500, 500],
+                    [-0.5, 0.5],
+                    Extrapolation.CLAMP
+                ),
+            },
+        ];
+    });
+
+    const birdOrigin = useDerivedValue(() => {
+        return { x: width / 4 + 32, y: birdY.value + 24 };
+    });
+
+    const fontFamily = Platform.select({ ios: 'Helvetica', default: 'serif' });
+    const fontStyle = {
+        fontFamily,
+        fontSize: 40,
+        fontWeight: 'bold' as const,
+    };
+    const font = matchFont(fontStyle);
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
-            <ImageBackground
-                source={require('@/assets/images/game-1/background_game1.gif')}
-                resizeMode="cover"
-                style={[styles.image]}
-            >
-                <ButtonYellow
-                    onPress={handleBack}
-                    text="Voltar"
-                    width={147}
-                    height={40}
-                    buttonColor={ButtonColorEnum.Orange}
-                />
-                {!gameStarted && (
-                    <ButtonYellow
-                        onPress={() => setGameStarted(true)}
-                        text="Jogar"
-                        width={147}
-                        height={40}
-                        buttonColor={ButtonColorEnum.Blue}
-                    />
-                )}
-                <Image
-                    source={require("@/assets/images/game-1/white-fly-animation.gif")}
-                    resizeMode="cover"
-                    style={{
-                        position: "absolute",
-                        width: 106,
-                        height: 64,
-                        transform: [
-                            { translateY: positionY },  // Muda a posição vertical do pato
-                            { translateX: -(width / 4) },  // Muda a posição horizontal do pato
-                            { scaleX: -1 },             // Reflete o pato horizontalmente
-                        ]
-                    }}
-                />
-                {targets.map((target) => (
-                    <Image
-                        key={target.id}
-                        source={require("@/assets/images/game-1/target.png")}
-                        resizeMode="cover"
-                        style={{
-                            position: 'absolute',
-                            width: 64,
-                            height: 64,
-                            left: target.x,  // Posição X do target (movendo da direita para a esquerda)
-                            top: target.y,   // Posição Y aleatória do target
-                        }}
-                    />
-                ))}
-            </ImageBackground>
+            <ButtonYellow
+                onPress={() => router.push({ pathname: "/duck/joy", params: { id: id } })}
+                text="Voltar"
+                width={147}
+                height={40}
+                buttonColor={ButtonColorEnum.Blue}
+            />
+            <GestureHandlerRootView style={{ flex: 1 }}>
+                <GestureDetector gesture={gesture}>
+                    <Canvas style={{ width, height }}>
+                        <Image image={bg} width={width} height={height} fit={'cover'} />
+                        <Image
+                            image={pipeTop}
+                            y={topPipeY}
+                            x={pipeX}
+                            width={pipeWidth}
+                            height={pipeHeight}
+                        />
+                        <Image
+                            image={pipeBottom}
+                            y={bottomPipeY}
+                            x={pipeX}
+                            width={pipeWidth}
+                            height={pipeHeight}
+                        />
+                        <Image
+                            image={base}
+                            width={width}
+                            height={150}
+                            y={height - 75}
+                            x={0}
+                            fit={'cover'}
+                        />
+                        <Group transform={birdTransform} origin={birdOrigin}>
+                            <Image image={bird} y={birdY} x={birdX} width={64} height={48} />
+                        </Group>
+                        <Text
+                            x={width / 2 - 30}
+                            y={100}
+                            text={score.toString()}
+                            font={font}
+                        />
+                    </Canvas>
+                </GestureDetector>
+            </GestureHandlerRootView>
         </SafeAreaView>
     );
 };
@@ -195,13 +272,8 @@ const Game1 = () => {
 const styles = StyleSheet.create({
     safeAreaContainer: {
         flex: 1,
-        backgroundColor: "#75D1E8"
+        backgroundColor: "grey"
     },
-    image: {
-        flex: 1,
-        padding: 20,
-        alignItems: "center"
-    }
-});
+})
 
-export default Game1;
+export default App;
