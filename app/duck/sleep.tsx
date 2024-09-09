@@ -27,7 +27,7 @@ const Sleep = () => {
                 setTextModal('O pato 🦆 já dormiu demais.')
                 return setModalVisible(true)
             }
-            console.log(updatedDuck.sleep)
+            setAnimation("sleep")
             await duckDataBase.updateAtributes({
                 hungry: updatedDuck.hungry,
                 joy: updatedDuck.joy,

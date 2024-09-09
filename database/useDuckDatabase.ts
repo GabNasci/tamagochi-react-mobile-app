@@ -24,17 +24,18 @@ export function useDuckDatabase() {
 
     const database = useSQLiteContext()
 
-    async function create(data: Omit<DuckDatabase, "id" | "updated_at">) {
+    async function create(data: Omit<DuckDatabase, "id" | "updated_at" | "hungry" | "joy" | "sleep">) {
         const statement = await database.prepareAsync(
-            "INSERT INTO ducks (name, type, hungry, joy, sleep) VALUES($name, $type, $hungry, $joy, $sleep)")
+            "INSERT INTO ducks (name, type, hungry, joy, sleep, updated_at) VALUES($name, $type, $hungry, $joy, $sleep, $updated_at)")
 
         try {
             const result = await statement.executeAsync({
                 $name: data.name,
                 $type: data.type,
-                $hungry: data.hungry,
-                $joy: data.joy,
-                $sleep: data.sleep
+                $hungry: 70,
+                $joy: 70,
+                $sleep: 70,
+                $updated_at: new Date().toISOString()
             })
 
         } catch (error) {
@@ -104,7 +105,7 @@ export function useDuckDatabase() {
         const ducks = await getAll();
     
         for (const duck of ducks) {
-            const minutesPassed = (Date.now() - new Date(duck.updated_at).getTime()) / (1000 * 60);
+            const minutesPassed = (new Date().getTime() - new Date(duck.updated_at).getTime()) / (1000 * 60);
             if (Math.floor(minutesPassed) >= 1) {
 
                 const statement = await database.prepareAsync(

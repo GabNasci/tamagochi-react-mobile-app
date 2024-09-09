@@ -59,9 +59,6 @@ const CreateDuck = () => {
             const response = await duckDatabase.create({
                 name: name,
                 type: duck,
-                hungry: 50,
-                sleep: 50,
-                joy: 50
             })
 
             setTitleModal('Sucesso');
@@ -78,7 +75,6 @@ const CreateDuck = () => {
         handleDuckExists()
     }, [])
 
-    console.log(textModal);
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
