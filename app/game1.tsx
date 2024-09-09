@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import ButtonYellow, { ButtonColorEnum } from "@/components/ButtonYellow";
-import { router, useFocusEffect } from "expo-router";
+import { router, useFocusEffect, useGlobalSearchParams } from "expo-router";
 import { Image, ImageBackground, StyleSheet, Text, Dimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { Accelerometer } from 'expo-sensors';
+import { System } from 'detect-collisions'; // Importa a biblioteca de colisões
 
 // Obtém a altura da tela
 
@@ -16,52 +17,121 @@ type Target = {
 }
 
 const Game1 = () => {
-    const [positionY, setPositionY] = useState(120);  // Posição vertical do pato
+
+    const { id } = useGlobalSearchParams()
+    const [positionY, setPositionY] = useState(height / 2);  // Posição vertical do pato
     const [gameStarted, setGameStarted] = useState(false);
     const [targets, setTargets] = useState<Target[]>([]);  // Estado para armazenar os targets
+    const [targetIntervalId, setTargetIntervalId] = useState<NodeJS.Timeout | null>(null);
+    const [collisionDetected, setCollisionDetected] = useState(false);
+
+    const system = new System();
 
     const handleBack = () => {
-        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
-        accelerometerSubscription.remove()
-        router.back();
+        router.push({
+            pathname: "/duck/joy",
+            params: { id: id }
+        });
         setGameStarted(false)
         Accelerometer.removeAllListeners()
-    };
-
-    const setLandscapeOrientation = async () => {
-        await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
-    };
-
-
-
-    const accelerometerSubscription = Accelerometer.addListener((data) => {
-        if (gameStarted) {
-            const { x, y } = data;
-
-            // Cálculo da nova posição vertical e horizontal
-            let newPositionY = (y * 200) + height / 2 - 100; // Ajusta para começar no meio
-
-            // Limita o pato para não ultrapassar as bordas da tela (vertical)
-            newPositionY = Math.max(height - (height + 16), Math.min(newPositionY, height));  // 64 é a altura do pato
-            // Limita o pato para não ultrapassar as bordas da tela (horizontal)
-            console.log(newPositionY)
-            setPositionY(newPositionY);  // Define a nova posição vertical do pato
+        if (targetIntervalId) {
+            clearInterval(targetIntervalId);
         }
-    });
+    };
 
-    // useEffect(() => {
-    //     console.log(height, positionY)
 
-    // }, [positionY]);
+    const checkCollision = (duckY: number, duckHeight: number, targetX: number, targetY: number, targetHeight: number) => {
+        const duckCollider = system.createCircle({ x: -200, y: duckY }, duckHeight / 2); // Exemplo de posição fixa no eixo X
+        const targetCollider = system.createCircle({ x: targetX, y: targetY }, targetHeight / 2);
+        console.log(duckCollider)
+        // Detecta colisão entre o pato e o alvo
+        const response = system.checkCollision(duckCollider, targetCollider);
+        return response;
+    };
+
+
+
+
+    const generateAndMoveTargets = () => {
+        const minY = 64; // 64px da borda superior
+        const maxY = height - 64; // 64px da borda inferior
+
+        const generateSingleTarget = () => {
+            return {
+                id: Math.random(),
+                x: width,  // Inicializa na borda direita da tela
+                y: Math.random() * (maxY - minY) + minY  // Posição Y entre minY e maxY
+            };
+        };
+
+        const generateTargets = () => {
+            // Gera o primeiro target imediatamente
+            const firstTarget = generateSingleTarget();
+            setTargets(prevTargets => [...prevTargets, firstTarget]);
+
+            // Gera o segundo target após um tempo aleatório entre 500ms e 1500ms
+            const delay = Math.random() * 1000 + 500; // Tempo entre 500ms e 1500ms
+            setTimeout(() => {
+                const secondTarget = generateSingleTarget();
+                setTargets(prevTargets => [...prevTargets, secondTarget]);
+            }, delay);
+        };
+
+        // Função que move os targets a cada intervalo
+        const moveTargets = setInterval(() => {
+            setTargets((prevTargets) => {
+                const movedTargets = prevTargets.map(target => ({
+                    ...target,
+                    x: target.x - 4 // Move o target mais rápido, mudando 4 unidades em vez de 2
+                })).filter(target => target.x > -64); // Remove se sair da tela (esquerda)
+
+                // Verifica colisão para cada target
+                movedTargets.forEach(target => {
+                    const hasCollided = checkCollision(positionY, 64,target.x, target.y, 64); // 64 é o tamanho do pato e do target
+                    if (hasCollided) {
+                        console.log("Colidiu");
+                        setCollisionDetected(true);
+                    }
+                });
+
+                if (movedTargets.length === 0) {
+                    generateTargets();
+                }
+
+                return movedTargets;
+            });
+        }, 50); // Intervalo de 50ms para mover os targets
+
+        setTargetIntervalId(moveTargets);  // Guarda o intervalo para ser limpo posteriormente
+    };
+
+    useEffect(() => {
+        if (gameStarted) {
+            generateAndMoveTargets();
+
+            const accelerometerSubscription = Accelerometer.addListener((data) => {
+                const { x, y, z } = data;
+                // Cálculo da nova posição vertical e horizontal
+                let newPositionY = (-x * 500) + height / 2; // Ajusta para começar no meio
+                // Limita o pato para não ultrapassar as bordas da tela (vertical)
+                newPositionY = Math.max(height - (height + 16), Math.min(newPositionY, height));  // 64 é a altura do pato
+                // Limita o pato para não ultrapassar as bordas da tela (horizontal)
+                setPositionY(newPositionY);  // Define a nova posição vertical do pato
+            });
+
+            // Define o intervalo de atualização do acelerômetro
+            Accelerometer.setUpdateInterval(100);
+        }
+    }, [gameStarted]);
 
 
     useFocusEffect(
         useCallback(() => {
-            setLandscapeOrientation();
-        setPositionY(120);
-        Accelerometer.setUpdateInterval(100); // Atualiza a cada 100ms
+            Accelerometer.setUpdateInterval(100); // Atualiza a cada 100ms
         }, [])
     );
+
+
 
 
 
@@ -117,14 +187,6 @@ const Game1 = () => {
                         }}
                     />
                 ))}
-                <Image
-                    source={require("@/assets/images/game-1/target.png")}
-                    resizeMode="cover"
-                    style={{
-                        width: 64,
-                        height: 64,
-                    }}
-                />
             </ImageBackground>
         </SafeAreaView>
     );
