@@ -12,17 +12,21 @@ type ButtonYellow = {
     width: number,
     height: number,
     buttonColor: ButtonColorEnum,
+    fontSize?: number,
 }
 
-const ButtonYellow = ({ text, onPress, width, height, buttonColor }: ButtonYellow) => {
+const ButtonYellow = ({ text, onPress, width, height, buttonColor, fontSize }: ButtonYellow) => {
     const colorButton = {
         [ButtonColorEnum.Yellow]: require('@/assets/images/yellow-button.png'),
         [ButtonColorEnum.Orange]: require('@/assets/images/button_play.png'),
         [ButtonColorEnum.Blue]: require('@/assets/images/button_blue.png'),
     }
 
+    if (!fontSize) fontSize = 24;
+
     return (
-        <TouchableOpacity onPress={onPress}
+        <TouchableOpacity 
+            onPress={onPress}
             style={[styles.button, { width: width, height: height }]}
             activeOpacity={0.85}
         >
@@ -32,7 +36,7 @@ const ButtonYellow = ({ text, onPress, width, height, buttonColor }: ButtonYello
                 imageStyle={styles.imageStyle}
                 resizeMode="contain"
             >
-                <Text style={styles.text}>{text}</Text>
+                <Text style={[styles.text, {fontSize: fontSize}]}>{text}</Text>
             </ImageBackground>
         </TouchableOpacity>
     );
@@ -42,7 +46,6 @@ const styles = StyleSheet.create({
     text: {
         fontFamily: 'supercell-font',
         color: "white",
-        fontSize: 24,
         textShadowColor: 'black',
         textShadowOffset: { width: 2, height: 2 },
         textShadowRadius: 2,
