@@ -19,6 +19,7 @@ const Game2 = () => {
   const [diceNumber, setDiceNumber] = useState(1);
   const [diceDuckNumber, setDiceDuckNumber] = useState(1);
   const [wasRolled, setWasRolled] = useState(false);
+  // const [wasRolled]
 
   const handleGetDuck = async (id: number) => {
     try {
@@ -72,8 +73,6 @@ const Game2 = () => {
       setTimeout(() => {
         setDiceNumber(newDiceNumber);
         setWasRolled(true);
-        console.log('newDiceNumber', newDiceNumber, 'diceDuckNumber', diceDuckNumber);
-        checkWinner(newDiceNumber, diceDuckNumber);
       }, 3000);
     }
   };
@@ -82,9 +81,7 @@ const Game2 = () => {
     const newDiceDuckNumber = Math.floor(Math.random() * 6) + 1;
     setDiceDuckNumber(7)
     setTimeout(() => {
-      console.log('caiu aqui dentro: ', newDiceDuckNumber);
       setDiceDuckNumber(newDiceDuckNumber);
-      console.log('numero pato: ', diceNumber);
     }, 2000)
   };
 
@@ -106,6 +103,13 @@ const Game2 = () => {
     setWasRolled(true);
   };
 
+
+  useEffect(() => {
+    if (wasRolled) {
+      console.log('jogado: ', diceNumber, 'pato: ', diceDuckNumber);
+      checkWinner(diceNumber, diceDuckNumber);
+    }
+  }, [wasRolled])
 
   return (
     <View style={styles.safeAreaContainer}>
