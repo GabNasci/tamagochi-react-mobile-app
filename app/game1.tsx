@@ -1,159 +1,95 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import ButtonYellow, { ButtonColorEnum } from "@/components/ButtonYellow";
 import { router, useFocusEffect, useGlobalSearchParams } from "expo-router";
-import { Image, ImageBackground, StyleSheet, Text, Dimensions } from "react-native";
+import { Image, ImageBackground, StyleSheet, Text, Dimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { Accelerometer } from 'expo-sensors';
 import { System, Circle, Box } from 'detect-collisions';
 import ModalCustom from '@/components/ModalCustom';
+import { useDuckDatabase } from '@/database/useDuckDatabase';
 
 // Obtém a altura da tela
 
 const { height, width } = Dimensions.get('window');
-type Target = {
-    id: number;
-    x: number;
-    y: number;
-}
 
 const Game1 = () => {
-
-    const { id } = useGlobalSearchParams()
-    const [positionY, setPositionY] = useState(height / 2);  // Posição vertical do pato
+    const { id } = useGlobalSearchParams();
+    const [positionY, setPositionY] = useState(height / 2);
     const [gameStarted, setGameStarted] = useState(false);
-    const [gameOver, setGameOver] = useState(false);
-    const [targets, setTargets] = useState<Target[]>([]);  // Estado para armazenar os targets
-    const [targetIntervalId, setTargetIntervalId] = useState<NodeJS.Timeout | null>(null);
-    const [positionX, setPositionX] = useState(width / 4);
-
     const [modalVisible, setModalVisible] = useState(false);
     const [textModal, setTextModal] = useState('');
-    const [duckImage, setDuckImage] = useState(require("@/assets/images/game-1/white-fly-animation.gif"));
+    const [modalTitle, setModalTitle] = useState('');
+    const [timeLeft, setTimeLeft] = useState(30); // Definindo 30 segundos para o jogo
+    const duckDataBase = useDuckDatabase()
 
-    
+    const handleJoy = async ()=> {
+        try {
+            const updatedDuck = await duckDataBase.findById(Number(id))
+            
+            if(!updatedDuck) {
+                setTextModal('Não foi possível encontrar o pato 🦆!')
+                return setModalVisible(true)
+            }
+            if (updatedDuck.sleep >= 100) {
+                setTextModal('O pato está cansado.')
+                return setModalVisible(true)
+            }
+            await duckDataBase.updateAtributes({
+                hungry: updatedDuck.hungry,
+                joy: updatedDuck.joy + 10,
+                sleep: updatedDuck.sleep,
+                id: updatedDuck.id
+            })
+            
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
 
     const handleBack = () => {
         router.push({
             pathname: "/duck/joy",
             params: { id: id }
         });
-        setGameStarted(false)
-        Accelerometer.removeAllListeners()
-        if (targetIntervalId) {
-            clearInterval(targetIntervalId);
-        }
-    };
-
-    const handleGameOver = () => {
-        setTextModal('Perdeu!')
-        setTargets([]);
-        setDuckImage(require("@/assets/images/game-1/duck-fly-dead.png"))
-        setGameStarted(false)
-        setGameOver(true)
-        Accelerometer.removeAllListeners()
-        return setModalVisible(true)
-    }
-
-    const restartGame = () => {
-        setDuckImage(require("@/assets/images/game-1/white-fly-animation.gif"))
-        setTargets([]);  // Limpa os targets
-        setGameOver(false);
         setGameStarted(false);
-        setModalVisible(false);  // Fecha o modal
-        if (targetIntervalId) {
-            clearInterval(targetIntervalId);
-        }
+        Accelerometer.removeAllListeners();
     };
 
-
-
-    const generateAndMoveTargets = () => {
-        const minY = 64; // 64px da borda superior
-        const maxY = height - 64; // 64px da borda inferior
-
-        const generateSingleTarget = () => {
-            return {
-                id: Math.random(),
-                x: width,  // Inicializa na borda direita da tela
-                y: Math.random() * (maxY - minY) + minY  // Posição Y entre minY e maxY
-            };
-        };
-
-        const generateTargets = () => {
-            // Gera o primeiro target imediatamente
-            const firstTarget = generateSingleTarget();
-            setTargets(prevTargets => [...prevTargets, firstTarget]);
-
-            // Gera o segundo target após um tempo aleatório entre 500ms e 1500ms
-            const delay = Math.random() * 1000 + 500; // Tempo entre 500ms e 1500ms
-            setTimeout(() => {
-                const secondTarget = generateSingleTarget();
-                setTargets(prevTargets => [...prevTargets, secondTarget]);
-            }, delay);
-        };
-
-        // Função que move os targets a cada intervalo
-        const moveTargets = setInterval(() => {
-            setTargets((prevTargets) => {
-                const movedTargets = prevTargets.map(target => ({
-                    ...target,
-                    x: target.x - 2 // Move o target mais rápido, mudando 4 unidades em vez de 2
-                })).filter(target => target.x > -64); // Remove se sair da tela (esquerda)
-
-                movedTargets.map(target => {
-                    // Log para verificar as posições dos alvos e do pato
-                    // Verificação de colisão refinada
-                    if (
-                        (positionY + 64) === (target.y) &&
-                        (positionX + 106) === (target.x)
-                    ) {
-                        clearInterval(moveTargets)
-                        handleGameOver();
-                    }
-                })
-
-                if (movedTargets.length === 0) {
-                    generateTargets();
-                }
-
-                return movedTargets;
-            });
-        }, 50); // Intervalo de 50ms para mover os targets
-
-        setTargetIntervalId(moveTargets);  // Guarda o intervalo para ser limpo posteriormente
-    };
-
+    // Inicia o jogo e o cronômetro
     useEffect(() => {
-
         if (gameStarted) {
-            generateAndMoveTargets();
-
             const accelerometerSubscription = Accelerometer.addListener((data) => {
-                const { x, y } = data;
-                // Cálculo da nova posição vertical e horizontal
-                let newPositionY = (-x * 500) + height / 2; // Ajusta para começar no meio
-                newPositionY = Math.max(64, Math.min(newPositionY, height - 64));  // Limita para não ultrapassar as bordas da tela
-
-                setPositionY(newPositionY);  // Define a nova posição vertical do pato
+                const { x } = data;
+                let newPositionY = (-x * 500) + height / 2;
+                newPositionY = Math.max(64, Math.min(newPositionY, height - 64));
+                setPositionY(newPositionY);
             });
 
-            // Define o intervalo de atualização do acelerômetro
             Accelerometer.setUpdateInterval(100);
+
+            // Cronômetro simples
+            const timer = setInterval(() => {
+                setTimeLeft(prevTime => {
+                    if (prevTime === 1) {
+                        setGameStarted(false);
+                        setModalVisible(true);
+                        setTextModal("Você conseguiu!\n Diversão + 10");
+                        setModalTitle("Parabéns!🦆");
+                        handleJoy()
+                        clearInterval(timer);
+                    }
+                    return prevTime - 1;
+                });
+            }, 1000);
+
+            return () => {
+                clearInterval(timer);
+                accelerometerSubscription.remove();
+            };
         }
     }, [gameStarted]);
-
-
-    useFocusEffect(
-        useCallback(() => {
-            Accelerometer.setUpdateInterval(100); // Atualiza a cada 100ms
-        }, [])
-    );
-
-
-
-
-
 
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
@@ -169,52 +105,53 @@ const Game1 = () => {
                     height={40}
                     buttonColor={ButtonColorEnum.Orange}
                 />
+
                 {!gameStarted && (
-                    <ButtonYellow
-                        onPress={() => setGameStarted(true)}
-                        text="Jogar"
-                        width={147}
-                        height={40}
-                        buttonColor={ButtonColorEnum.Blue}
-                    />
+                    <View style={styles.description}>
+                        <ButtonYellow
+                            onPress={() => {
+                                setGameStarted(true);
+                                setTimeLeft(10);
+                            }}
+                            text="Jogar"
+                            width={147}
+                            height={40}
+                            buttonColor={ButtonColorEnum.Blue}
+                        />
+                        <Text style={styles.textDescription}>Voe com o pato 🦆 por 10 segundos para aumentar usa diversão!</Text>
+                    </View>
                 )}
+
+                {gameStarted && (
+                    <View style={styles.time}>
+                        <Text style={styles.textTime}>
+                            Tempo: {timeLeft}s
+                        </Text>
+                    </View>
+                )}
+
                 <Image
-                    source={duckImage}
+                    source={require("@/assets/images/game-1/white-fly-animation.gif")}
                     resizeMode="cover"
                     style={{
                         position: "absolute",
                         width: 106,
                         height: 64,
-                        top: positionY,  // Posição vertical do pato
-                        left: positionX,  // Posição horizontal do pato
-                        transform: [
-                            { scaleX: -1 },  // Reflete o pato horizontalmente
-                        ]
+                        top: positionY,
+                        left: width / 4,
+                        transform: [{ scaleX: -1 }],
                     }}
                 />
-                {targets.map((target) => (
-                    <Image
-                        key={target.id}
-                        source={require("@/assets/images/game-1/target.png")}
-                        resizeMode="cover"
-                        style={{
-                            position: 'absolute',
-                            width: 64,
-                            height: 64,
-                            left: target.x,  // Posição X do target (movendo da direita para a esquerda)
-                            top: target.y,   // Posição Y aleatória do target
-                        }}
-                    />
-                ))}
-                <ModalCustom
-                    visible={modalVisible}
-                    title='Alerta'
-                    text={textModal}
-                    onClose={
-                        restartGame
-                    }
-                />
             </ImageBackground>
+
+            {modalVisible && (
+                <ModalCustom
+                    title={modalTitle}
+                    visible={modalVisible}
+                    onClose={() => setModalVisible(false)}
+                    text={textModal}
+                />
+            )}
         </SafeAreaView>
     );
 };
@@ -228,6 +165,33 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 20,
         alignItems: "center"
+    },
+    description: {
+        position: 'absolute',
+        bottom: 60,
+        alignItems: "center"
+    },
+    textDescription: {
+        fontSize: 18,
+        fontFamily: 'supercell-font',
+        color: "white",
+        textShadowColor: 'black',
+        textShadowOffset: { width: 2, height: 2 },
+        textShadowRadius: 2,
+        textAlign: "center"
+    },
+    time: {
+        position: "absolute",
+        top: 65
+    },
+    textTime: {
+        fontSize: 18,
+        fontFamily: 'supercell-font',
+        color: "white",
+        textShadowColor: 'black',
+        textShadowOffset: { width: 2, height: 2 },
+        textShadowRadius: 2,
+        textAlign: "center"
     }
 });
 
