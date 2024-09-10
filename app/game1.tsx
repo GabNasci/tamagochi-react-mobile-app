@@ -5,7 +5,6 @@ import { Image, ImageBackground, StyleSheet, Text, Dimensions } from "react-nati
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { Accelerometer } from 'expo-sensors';
-import { System } from 'detect-collisions'; // Importa a biblioteca de colisões
 
 // Obtém a altura da tela
 
@@ -25,7 +24,6 @@ const Game1 = () => {
     const [targetIntervalId, setTargetIntervalId] = useState<NodeJS.Timeout | null>(null);
     const [collisionDetected, setCollisionDetected] = useState(false);
 
-    const system = new System();
 
     const handleBack = () => {
         router.push({
@@ -38,17 +36,6 @@ const Game1 = () => {
             clearInterval(targetIntervalId);
         }
     };
-
-
-    const checkCollision = (duckY: number, duckHeight: number, targetX: number, targetY: number, targetHeight: number) => {
-        const duckCollider = system.createCircle({ x: -200, y: duckY }, duckHeight / 2); // Exemplo de posição fixa no eixo X
-        const targetCollider = system.createCircle({ x: targetX, y: targetY }, targetHeight / 2);
-        console.log(duckCollider)
-        // Detecta colisão entre o pato e o alvo
-        const response = system.checkCollision(duckCollider, targetCollider);
-        return response;
-    };
-
 
 
 
@@ -82,17 +69,13 @@ const Game1 = () => {
             setTargets((prevTargets) => {
                 const movedTargets = prevTargets.map(target => ({
                     ...target,
-                    x: target.x - 4 // Move o target mais rápido, mudando 4 unidades em vez de 2
+                    x: target.x - 2 // Move o target mais rápido, mudando 4 unidades em vez de 2
                 })).filter(target => target.x > -64); // Remove se sair da tela (esquerda)
 
-                // Verifica colisão para cada target
-                movedTargets.forEach(target => {
-                    const hasCollided = checkCollision(positionY, 64,target.x, target.y, 64); // 64 é o tamanho do pato e do target
-                    if (hasCollided) {
-                        console.log("Colidiu");
-                        setCollisionDetected(true);
-                    }
-                });
+                movedTargets.map(target => {
+                    // console.log(target.x === 20 && target.y === positionY)
+                    console.log(target.x === 150 )
+                })
 
                 if (movedTargets.length === 0) {
                     generateTargets();
