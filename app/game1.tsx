@@ -5,6 +5,8 @@ import { Image, ImageBackground, StyleSheet, Text, Dimensions } from "react-nati
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { Accelerometer } from 'expo-sensors';
+import { System, Circle, Box } from 'detect-collisions';
+import ModalCustom from '@/components/ModalCustom';
 
 // Obtém a altura da tela
 
@@ -20,10 +22,16 @@ const Game1 = () => {
     const { id } = useGlobalSearchParams()
     const [positionY, setPositionY] = useState(height / 2);  // Posição vertical do pato
     const [gameStarted, setGameStarted] = useState(false);
+    const [gameOver, setGameOver] = useState(false);
     const [targets, setTargets] = useState<Target[]>([]);  // Estado para armazenar os targets
     const [targetIntervalId, setTargetIntervalId] = useState<NodeJS.Timeout | null>(null);
-    const [collisionDetected, setCollisionDetected] = useState(false);
+    const [positionX, setPositionX] = useState(width / 4);
 
+    const [modalVisible, setModalVisible] = useState(false);
+    const [textModal, setTextModal] = useState('');
+    const [duckImage, setDuckImage] = useState(require("@/assets/images/game-1/white-fly-animation.gif"));
+
+    
 
     const handleBack = () => {
         router.push({
@@ -32,6 +40,27 @@ const Game1 = () => {
         });
         setGameStarted(false)
         Accelerometer.removeAllListeners()
+        if (targetIntervalId) {
+            clearInterval(targetIntervalId);
+        }
+    };
+
+    const handleGameOver = () => {
+        setTextModal('Perdeu!')
+        setTargets([]);
+        setDuckImage(require("@/assets/images/game-1/duck-fly-dead.png"))
+        setGameStarted(false)
+        setGameOver(true)
+        Accelerometer.removeAllListeners()
+        return setModalVisible(true)
+    }
+
+    const restartGame = () => {
+        setDuckImage(require("@/assets/images/game-1/white-fly-animation.gif"))
+        setTargets([]);  // Limpa os targets
+        setGameOver(false);
+        setGameStarted(false);
+        setModalVisible(false);  // Fecha o modal
         if (targetIntervalId) {
             clearInterval(targetIntervalId);
         }
@@ -73,8 +102,15 @@ const Game1 = () => {
                 })).filter(target => target.x > -64); // Remove se sair da tela (esquerda)
 
                 movedTargets.map(target => {
-                    // console.log(target.x === 20 && target.y === positionY)
-                    console.log(target.x === 150 )
+                    // Log para verificar as posições dos alvos e do pato
+                    // Verificação de colisão refinada
+                    if (
+                        (positionY + 64) === (target.y) &&
+                        (positionX + 106) === (target.x)
+                    ) {
+                        clearInterval(moveTargets)
+                        handleGameOver();
+                    }
                 })
 
                 if (movedTargets.length === 0) {
@@ -89,16 +125,16 @@ const Game1 = () => {
     };
 
     useEffect(() => {
+
         if (gameStarted) {
             generateAndMoveTargets();
 
             const accelerometerSubscription = Accelerometer.addListener((data) => {
-                const { x, y, z } = data;
+                const { x, y } = data;
                 // Cálculo da nova posição vertical e horizontal
                 let newPositionY = (-x * 500) + height / 2; // Ajusta para começar no meio
-                // Limita o pato para não ultrapassar as bordas da tela (vertical)
-                newPositionY = Math.max(height - (height + 16), Math.min(newPositionY, height));  // 64 é a altura do pato
-                // Limita o pato para não ultrapassar as bordas da tela (horizontal)
+                newPositionY = Math.max(64, Math.min(newPositionY, height - 64));  // Limita para não ultrapassar as bordas da tela
+
                 setPositionY(newPositionY);  // Define a nova posição vertical do pato
             });
 
@@ -143,16 +179,16 @@ const Game1 = () => {
                     />
                 )}
                 <Image
-                    source={require("@/assets/images/game-1/white-fly-animation.gif")}
+                    source={duckImage}
                     resizeMode="cover"
                     style={{
                         position: "absolute",
                         width: 106,
                         height: 64,
+                        top: positionY,  // Posição vertical do pato
+                        left: positionX,  // Posição horizontal do pato
                         transform: [
-                            { translateY: positionY },  // Muda a posição vertical do pato
-                            { translateX: -(width / 4) },  // Muda a posição horizontal do pato
-                            { scaleX: -1 },             // Reflete o pato horizontalmente
+                            { scaleX: -1 },  // Reflete o pato horizontalmente
                         ]
                     }}
                 />
@@ -170,6 +206,14 @@ const Game1 = () => {
                         }}
                     />
                 ))}
+                <ModalCustom
+                    visible={modalVisible}
+                    title='Alerta'
+                    text={textModal}
+                    onClose={
+                        restartGame
+                    }
+                />
             </ImageBackground>
         </SafeAreaView>
     );
