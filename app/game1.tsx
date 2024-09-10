@@ -1,15 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {useEffect, useState } from 'react';
 import ButtonYellow, { ButtonColorEnum } from "@/components/ButtonYellow";
-import { router, useFocusEffect, useGlobalSearchParams } from "expo-router";
+import { router, useGlobalSearchParams } from "expo-router";
 import { Image, ImageBackground, StyleSheet, Text, Dimensions, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as ScreenOrientation from "expo-screen-orientation";
 import { Accelerometer } from 'expo-sensors';
-import { System, Circle, Box } from 'detect-collisions';
 import ModalCustom from '@/components/ModalCustom';
 import { useDuckDatabase } from '@/database/useDuckDatabase';
-
-// Obtém a altura da tela
 
 const { height, width } = Dimensions.get('window');
 
@@ -20,7 +16,7 @@ const Game1 = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [textModal, setTextModal] = useState('');
     const [modalTitle, setModalTitle] = useState('');
-    const [timeLeft, setTimeLeft] = useState(30); // Definindo 30 segundos para o jogo
+    const [timeLeft, setTimeLeft] = useState(30);
     const duckDataBase = useDuckDatabase()
 
     const handleJoy = async ()=> {
@@ -57,7 +53,6 @@ const Game1 = () => {
         Accelerometer.removeAllListeners();
     };
 
-    // Inicia o jogo e o cronômetro
     useEffect(() => {
         if (gameStarted) {
             const accelerometerSubscription = Accelerometer.addListener((data) => {
@@ -69,7 +64,6 @@ const Game1 = () => {
 
             Accelerometer.setUpdateInterval(100);
 
-            // Cronômetro simples
             const timer = setInterval(() => {
                 setTimeLeft(prevTime => {
                     if (prevTime === 1) {
