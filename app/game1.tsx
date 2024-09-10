@@ -29,6 +29,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ButtonYellow, { ButtonColorEnum } from '@/components/ButtonYellow';
 import { router, useGlobalSearchParams } from 'expo-router';
+import { Accelerometer } from 'expo-sensors';
 
 const GRAVITY = 1000;
 const JUMP_FORCE = -500;
@@ -51,6 +52,7 @@ interface Rect {
 const App: React.FC = () => {
     const { width, height } = useWindowDimensions();
     const [score, setScore] = useState(0);
+    const [positionY, setPositionY] = useState(height / 3)
 
     const { id } = useGlobalSearchParams()
 
@@ -84,7 +86,7 @@ const App: React.FC = () => {
         },
         {
             x: pipeX.value,
-            y: topPipeY.value,  
+            y: topPipeY.value,
             h: pipeHeight,
             w: pipeWidth,
         },
@@ -141,22 +143,27 @@ const App: React.FC = () => {
         () => birdY.value,
         (currentValue) => {
             const center = {
-                x: birdX + 32,
-                y: birdY.value + 24,
+                x: birdX + 32,  // Centro X do pássaro
+                y: currentValue + 24,  // Centro Y do pássaro com base no valor atual
             };
-
+    
+            // Verificar se o pássaro está colidindo com o topo ou o fundo da tela
             if (currentValue > height - 100 || currentValue < 0) {
-                gameOver.value = true;
+                gameOver.value = true;  // Fim de jogo
             }
-
+    
+            // Verificar colisão com obstáculos
             const isColliding = obstacles.value.some((rect) =>
                 isPointCollidingWithRect(center, rect)
             );
+            
+            // Se houver colisão, setar o gameOver
             if (isColliding) {
                 gameOver.value = true;
             }
         }
     );
+    
 
     useAnimatedReaction(
         () => gameOver.value,
@@ -168,10 +175,10 @@ const App: React.FC = () => {
     );
 
     useFrameCallback(({ timeSincePreviousFrame: dt }) => {
-        // if (!dt || gameOver.value) {
-        //     return;
-        // }
-        // birdY.value = birdY.value + (birdYVelocity.value * dt) / 1000;
+        if (!dt || gameOver.value) {
+            return;
+        }
+        birdY.value = positionY;
         // birdYVelocity.value = birdYVelocity.value + (GRAVITY * dt) / 1000;
     });
 
@@ -216,10 +223,51 @@ const App: React.FC = () => {
     };
     const font = matchFont(fontStyle);
 
+    const handleBack = () => {
+        router.push({
+            pathname: "/duck/joy",
+            params: { id: id }
+        });
+        Accelerometer.removeAllListeners()
+    };
+
+    useEffect(() => {
+        // Adiciona o listener do acelerômetro, independentemente do estado de gameOver
+        const accelerometerSubscription = Accelerometer.addListener((data) => {
+            const { x } = data;  // Focando no eixo x para controlar o pássaro
+    
+            // Cálculo da nova posição vertical do pássaro baseado no valor do acelerômetro
+            let newPositionY = (-x * 500) + height / 2;  // Ajusta para centralizar o pássaro
+            // Limita o valor para evitar que o pássaro saia dos limites da tela
+            newPositionY = Math.max(0, Math.min(newPositionY, height - 64));  // 64 é a altura do pássaro
+    
+            // Atualiza diretamente a sharedValue de birdY
+            birdY.value = newPositionY;
+        });
+    
+        // Define o intervalo de atualização do acelerômetro
+        Accelerometer.setUpdateInterval(100);
+    
+        // Remove o listener quando o componente for desmontado
+        return () => accelerometerSubscription && accelerometerSubscription.remove();
+    }, []);  // Remove a dependência de gameOver para garantir que o listener sempre seja ativo
+    
+    // Use AnimatedReaction para observar as mudanças em birdY e aplicar no canvas
+    useAnimatedReaction(
+        () => birdY.value,
+        (currentValue) => {
+            if (!gameOver.value) {
+                // Atualiza a posição do pássaro no canvas sempre que houver mudança no birdY
+                birdY.value = currentValue;
+            }
+        }
+    );
+    
+
     return (
         <SafeAreaView style={styles.safeAreaContainer}>
             <ButtonYellow
-                onPress={() => router.push({ pathname: "/duck/joy", params: { id: id } })}
+                onPress={handleBack}
                 text="Voltar"
                 width={147}
                 height={40}
