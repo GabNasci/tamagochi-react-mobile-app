@@ -15,16 +15,21 @@ const Hungry = () => {
     const [duck, setDuck] = useState<DuckDatabase>()
     const [animation, setAnimation] = useState<string>("")
     const [modalVisible, setModalVisible] = useState(false);
+    const [textModal, setTextModal] = useState('');
 
     const handleEat = async ()=> {
         try {
             const updatedDuck = await duckDataBase.findById(Number(id))
-            
-            if(!updatedDuck) return Alert.alert("Não foi possível encontrar o pato!")
+
+            if(!updatedDuck) {
+                setTextModal('Não foi possível encontrar o pato 🦆!');
+                return setModalVisible(true);
+            }
             if(updatedDuck.hungry >= 100) {
                 setAnimation("nope")
                 setTimeout(() => setAnimation(""), 2000)
-                return Alert.alert("O pato comeu demais.")
+                setTextModal('O pato 🦆 comeu demais.');
+                return setModalVisible(true);
             }
             await duckDataBase.updateAtributes({
                 hungry: updatedDuck.hungry + 10,
@@ -82,7 +87,7 @@ const Hungry = () => {
                 <ModalCustom
                     visible={modalVisible}
                     title='Alerta'
-                    text='Não foi possível encontrar o pato 🦆!'
+                    text={textModal}
                     onClose={
                         () => setModalVisible(false)
                     }
