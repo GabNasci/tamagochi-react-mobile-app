@@ -54,8 +54,8 @@ const App: React.FC = () => {
 
     const { id } = useGlobalSearchParams()
 
-    const bg = useImage(require('@/assets/images/background_hungry.png'));
-    const bird = useImage(require('@/assets/images/game-1/white-fly-animation.gif'));
+    const bg = useImage(require('@/assets/images/sprites/background-day.png'));
+    const bird = useImage(require('@/assets/images/sprites/yellowbird-upflap.png'));
     const pipeBottom = useImage(require('@/assets/images/sprites/pipe-green.png'));
     const pipeTop = useImage(require('@/assets/images/sprites/pipe-green-top.png'));
     const base = useImage(require('@/assets/images/sprites/base.png'));
@@ -84,7 +84,7 @@ const App: React.FC = () => {
         },
         {
             x: pipeX.value,
-            y: topPipeY.value,
+            y: topPipeY.value,  
             h: pipeHeight,
             w: pipeWidth,
         },
@@ -168,11 +168,11 @@ const App: React.FC = () => {
     );
 
     useFrameCallback(({ timeSincePreviousFrame: dt }) => {
-        if (!dt || gameOver.value) {
-            return;
-        }
-        birdY.value = birdY.value + (birdYVelocity.value * dt) / 1000;
-        birdYVelocity.value = birdYVelocity.value + (GRAVITY * dt) / 1000;
+        // if (!dt || gameOver.value) {
+        //     return;
+        // }
+        // birdY.value = birdY.value + (birdYVelocity.value * dt) / 1000;
+        // birdYVelocity.value = birdYVelocity.value + (GRAVITY * dt) / 1000;
     });
 
     const restartGame = () => {
@@ -188,8 +188,6 @@ const App: React.FC = () => {
     const gesture = Gesture.Tap().onStart(() => {
         if (gameOver.value) {
             restartGame();
-        } else {
-            birdYVelocity.value = JUMP_FORCE;
         }
     });
 
