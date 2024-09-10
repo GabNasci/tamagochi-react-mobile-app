@@ -24,10 +24,11 @@ const Game2 = () => {
   const [modalTitle, setModalTitle] = useState('');
   const [timeLeft, setTimeLeft] = useState(30);
   const [score, setScore] = useState(0);
+  const [joyValue, setJoyValue] = useState<number>(0);
   const duckDataBase = useDuckDatabase();
   const [duckHunters, setDuckHunters] = useState<DuckHunter[]>([]);
 
-  const handleJoy = async () => {
+  const handleJoy = async (value: number) => {
     try {
       const updatedDuck = await duckDataBase.findById(Number(id));
 
@@ -41,7 +42,7 @@ const Game2 = () => {
       }
       await duckDataBase.updateAtributes({
         hungry: updatedDuck.hungry,
-        joy: updatedDuck.joy + 10,
+        joy: updatedDuck.joy + value,
         sleep: updatedDuck.sleep,
         id: updatedDuck.id
       });
@@ -115,18 +116,16 @@ const Game2 = () => {
         setTimeLeft(prevTime => {
           if (prevTime === 1) {
             setGameStarted(false);
-            
-            setTextModal(`Você conseguiu!\nPontuação: ${score} 🦆`);
             setModalVisible(true);
             setModalTitle("Parabéns!🦆");
-            handleJoy();
+            handleJoy(joyValue);
             setDuckHunters([])
             clearInterval(timer);
           }
           return prevTime - 1;
         });
       }, 1000);
-
+      console.log(score)
       const moveInterval = setInterval(moveDucks, 50); // Movimento constante dos cachorros
 
       return () => {
@@ -134,7 +133,14 @@ const Game2 = () => {
         clearInterval(moveInterval);
       };
     }
-  }, [gameStarted]);
+  }, [gameStarted, joyValue]);
+
+  useEffect(() => {
+    if(gameStarted) {
+      setJoyValue(parseInt(`${score/10}`) * 10)
+      setTextModal(`Pontuação: ${score}\n+ ${parseInt(`${score/10}`) * 10} de Diversão 🦆`)
+    }
+  }, [score])
 
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
