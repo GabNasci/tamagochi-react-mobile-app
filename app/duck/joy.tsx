@@ -9,7 +9,7 @@ import { ImageBackground, StyleSheet, Text, View } from "react-native";
 
 const Joy = () => {
     const duckDataBase = useDuckDatabase()
-    const {id} = useGlobalSearchParams()
+    const { id } = useGlobalSearchParams()
     const [duck, setDuck] = useState<DuckDatabase>()
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -42,13 +42,22 @@ const Joy = () => {
             >
                 {duck ? (
                     <View style={styles.mainContainer}>
-                        <CardDuckPages link1={{ pathname: "/game1", params: {id: duck.id}}} link2={{ pathname: "/game2", params: {id: duck.id}}} duck={duck} nameStatus={StatusDuckEnum.Joy}/>
-                        <DuckGif duck={duck.type} width={140} status={duck.status} inverted={true}/>
+                        <CardDuckPages
+                            link1={{ pathname: "/game1", params: { id: duck.id } }}
+                            link2={{ pathname: "/game2", params: { id: duck.id } }}
+                            link3={{ pathname: "/game3", params: { id: duck.id } }}
+                            duck={duck}
+                            nameStatus={StatusDuckEnum.Joy} />
+                        <DuckGif
+                            duck={duck.type}
+                            width={140}
+                            status={duck.status}
+                            inverted={true} />
                     </View>
-                ): (<View style={styles.loadingContainer}>
-                        <Text style={styles.loadingText}>Carregando...</Text>
-                    </View>
-                    )
+                ) : (<View style={styles.loadingContainer}>
+                    <Text style={styles.loadingText}>Carregando...</Text>
+                </View>
+                )
                 }
                 <ModalCustom
                     visible={modalVisible}
@@ -83,7 +92,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
-    loadingText : {
+    loadingText: {
         fontFamily: 'supercell-font',
         color: "white",
         fontSize: 40,

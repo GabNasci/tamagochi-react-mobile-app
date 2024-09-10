@@ -107,7 +107,6 @@ export function useDuckDatabase() {
         for (const duck of ducks) {
             const minutesPassed = (new Date().getTime() - new Date(duck.updated_at).getTime()) / (1000 * 60);
             if (Math.floor(minutesPassed) >= 1) {
-                console.log(minutesPassed, " minuto passow", duck.id)
                 const statement = await database.prepareAsync(
                     "UPDATE ducks SET hungry = $hungry, joy = $joy, sleep = $sleep, updated_at = $updated_at WHERE id = $id"
                 );
