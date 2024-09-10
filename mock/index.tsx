@@ -69,5 +69,14 @@ export const foodImage = [
     { name: 'Tuna', image: require('@/assets/images/food/Tuna.png') },
     { name: 'Void_Salmon', image: require('@/assets/images/food/Void_Salmon.png') },
     { name: 'Walleye', image: require('@/assets/images/food/Walleye.png') },
-  ];
-  
+];
+
+export const diceImages = {
+    1: require('@/assets/images/dice/dice1.png'),
+    2: require('@/assets/images/dice/dice2.png'),
+    3: require('@/assets/images/dice/dice3.png'),
+    4: require('@/assets/images/dice/dice4.png'),
+    5: require('@/assets/images/dice/dice5.png'),
+    6: require('@/assets/images/dice/dice6.png'),
+    7: require('@/assets/images/dice/diceRoll.gif'),
+  };
