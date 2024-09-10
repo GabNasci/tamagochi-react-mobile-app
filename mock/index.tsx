@@ -72,6 +72,7 @@ export const foodImage = [
 ];
 
 export const diceImages = {
+    0: require('@/assets/images/dice/dice0.png'),
     1: require('@/assets/images/dice/dice1.png'),
     2: require('@/assets/images/dice/dice2.png'),
     3: require('@/assets/images/dice/dice3.png'),

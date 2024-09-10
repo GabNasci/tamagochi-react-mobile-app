@@ -16,17 +16,19 @@ const Game2 = () => {
   const [textModal, setTextModal] = useState('');
   const [titleModal, setTitleModal] = useState('');
   const [redirectRouter, setRedirectRouter] = useState(false);
-  const [diceNumber, setDiceNumber] = useState(1);
-  const [diceDuckNumber, setDiceDuckNumber] = useState(1);
+  const [diceNumber, setDiceNumber] = useState(0);
+  const [diceDuckNumber, setDiceDuckNumber] = useState(0);
   const [wasRolled, setWasRolled] = useState(false);
-  // const [wasRolled]
 
   const handleGetDuck = async (id: number) => {
     try {
       await duckDataBase.updateAtributesByTime()
       const response = await duckDataBase.findById(id)
       if (response) return setDuck(response)
+      setTitleModal('Alerta')
+      setTextModal('Não foi possível encontrar o pato 🦆!')
       return setModalVisible(true)
+
     } catch (error) {
       console.log("erro aqui:" + error)
     }
@@ -86,27 +88,26 @@ const Game2 = () => {
   };
 
   const checkWinner = (dice: number, duckDice: number) => {
-    console.log('dice: ', dice, 'duckDice: ', duckDice);
+    const scoreboard = `Vc ${diceNumber} X ${diceDuckNumber} Pato 🦆\n`
     if (dice > duckDice) {
       setModalVisible(true)
       setTitleModal('Você ganhou! 🎉')
-      setTextModal('Parabéns você ganhou do seu pato 🦆')
+      setTextModal(`${scoreboard}Parabéns você ganhou do seu pato 🦆.`)
     } else if (dice < duckDice) {
       setModalVisible(true)
       setTitleModal('O pato ganhou! 🦆🎉')
-      setTextModal('Não foi desta vez')
+      setTextModal(`${scoreboard}Não foi desta vez`)
     } else if (dice === duckDice) {
       setModalVisible(true)
       setTitleModal('Empate!')
-      setTextModal('Tente novamente para ver quem vence!')
+      setTextModal(`${scoreboard}Tente novamente para ver quem vence!`)
     }
     setWasRolled(true);
   };
 
 
   useEffect(() => {
-    if (wasRolled) {
-      console.log('jogado: ', diceNumber, 'pato: ', diceDuckNumber);
+    if (wasRolled && diceNumber > 0 && diceDuckNumber > 0) {
       checkWinner(diceNumber, diceDuckNumber);
     }
   }, [wasRolled])
@@ -162,10 +163,8 @@ const Game2 = () => {
           visible={modalVisible}
           title={titleModal}
           text={textModal}
-          // title='Alerta'
-          // text='Não foi possível encontrar o pato 🦆! '
           onClose={
-            () => setModalVisible(false)
+            () => router.back()
           }
         />
       </View>
