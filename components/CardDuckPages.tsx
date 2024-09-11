@@ -11,17 +11,21 @@ type CardDuckPagesProps = {
     handleSleep?: () => {},
     link1?: Href<string | object>
     link2?: Href<string | object>
+    link3?: Href<string | object>
 }
 
-const CardDuckPages = ({ duck, nameStatus, handleSleep, link1, link2}: CardDuckPagesProps) => {
+const CardDuckPages = ({ duck, nameStatus, handleSleep, link1, link2, link3}: CardDuckPagesProps) => {
     const { imgBackground, heightBackground } = nameStatus === StatusDuckEnum.Hunger ?
         { imgBackground: require('@/assets/images/background/backgroundCardDuckPagesSmall.png'), heightBackground: 122 } :
+        nameStatus === StatusDuckEnum.Joy ? 
+        { imgBackground: require('@/assets/images/background/backgroundStatusMenu.png'), heightBackground: 300 } :
         { imgBackground: require('@/assets/images/background/backgroundCardDuckPages.png'), heightBackground: 220 }
 
     return (
         <ImageBackground
             source={imgBackground}
             style={[styles.container, { height: heightBackground }]}
+            resizeMode="cover"
         >
             <Text style={styles.text}>{duck.name}</Text>
             {  nameStatus === StatusDuckEnum.Joy ? (
@@ -37,18 +41,26 @@ const CardDuckPages = ({ duck, nameStatus, handleSleep, link1, link2}: CardDuckP
                 <View style={styles.containerJoy}>
                     <ButtonYellow
                         onPress={() => router.push(link1 ? link1 : "/duck/joy")}
-                        text="Jogo 01"
-                        width={147}
-                        height={40}
+                        text="É o voas"
+                        width={160}
+                        height={48}
                         buttonColor={ButtonColorEnum.Yellow}
                     />
                     <ButtonYellow
                         onPress={() => router.push(link2 ? link2 : "/duck/joy")}
-                        text="Jogo 02"
-                        width={147}
-                        height={40}
+                        text="É o rólas"
+                        width={160}
+                        height={48}
                         buttonColor={ButtonColorEnum.Orange}
                     />
+                    <ButtonYellow
+                        onPress={() => router.push(link3 ? link3 : "/duck/joy")}
+                        text="É o vingas"
+                        width={160}
+                        height={48}
+                        buttonColor={ButtonColorEnum.Blue}
+                    />
+                
                 </View>
             ) : nameStatus === StatusDuckEnum.Sleep ? (
                 <View style={styles.containerSleep}>

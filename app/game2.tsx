@@ -172,6 +172,36 @@ const Game2 = () => {
   );
 };
 
+
+  const handleBack = () => {
+    router.push({
+      pathname: "/duck/joy",
+      params: { id: id }
+    });
+  };
+
+
+  return (
+    <SafeAreaView style={styles.safeAreaContainer}>
+      <ImageBackground
+        source={require('@/assets/images/game-2/background_game2.png')}
+        resizeMode="cover"
+        style={[styles.image]}
+      >
+        <ButtonYellow
+          onPress={handleBack}
+          text="Voltar"
+          width={147}
+          height={40}
+          buttonColor={ButtonColorEnum.Orange}
+        />
+
+
+      </ImageBackground>
+    </SafeAreaView>
+  );
+};
+
 const styles = StyleSheet.create({
   safeAreaContainer: {
     flex: 1,

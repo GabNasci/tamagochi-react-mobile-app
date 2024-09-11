@@ -14,7 +14,7 @@ const Layout = () => {
                 name="index"
                 options={{
                     header: () => (
-                        <Header title="Pato" />
+                        <Header title="Verificas" />
                     ),
                     tabBarLabel: 'Home',
                     tabBarShowLabel: false,
