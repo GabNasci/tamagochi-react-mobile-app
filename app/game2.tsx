@@ -15,7 +15,6 @@ const Game2 = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [textModal, setTextModal] = useState('');
   const [titleModal, setTitleModal] = useState('');
-  const [redirectRouter, setRedirectRouter] = useState(false);
   const [diceNumber, setDiceNumber] = useState(0);
   const [diceDuckNumber, setDiceDuckNumber] = useState(0);
   const [wasRolled, setWasRolled] = useState(false);
@@ -34,6 +33,30 @@ const Game2 = () => {
     }
   }
 
+  const handleJoy = async (value: number) => {
+    try {
+      const updatedDuck = await duckDataBase.findById(Number(id));
+
+      if (!updatedDuck) {
+        setTextModal('Não foi possível encontrar o pato 🦆!');
+        return setModalVisible(true);
+      }
+      if (updatedDuck.joy >= 100) {
+        setTextModal('O pato está cansado.');
+        return setModalVisible(true);
+      }
+
+      await duckDataBase.updateAtributes({
+        hungry: updatedDuck.hungry,
+        joy: (updatedDuck.joy + value) > 100 ? 100 : updatedDuck.joy + value,
+        sleep: updatedDuck.sleep,
+        id: updatedDuck.id
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
       handleGetDuck(Number(id))
@@ -47,7 +70,7 @@ const Game2 = () => {
   });
 
   useEffect(() => {
-    Accelerometer.setUpdateInterval(700);
+    Accelerometer.setUpdateInterval(1500);
 
     const subscription = Accelerometer.addListener(accelerometerData => {
       setData(accelerometerData);
@@ -88,19 +111,21 @@ const Game2 = () => {
   };
 
   const checkWinner = (dice: number, duckDice: number) => {
-    const scoreboard = `Vc ${diceNumber} X ${diceDuckNumber} Pato 🦆\n`
+    const scoreboard = `Vc ${diceNumber} X ${diceDuckNumber} 🦆\n\n`
     if (dice > duckDice) {
-      setModalVisible(true)
-      setTitleModal('Você ganhou! 🎉')
-      setTextModal(`${scoreboard}Parabéns você ganhou do seu pato 🦆.`)
+      handleJoy(10);
+      setModalVisible(true);
+      setTitleModal('Você ganhou! 🎉');
+      setTextModal(`${scoreboard} Diversão + 10`);
     } else if (dice < duckDice) {
-      setModalVisible(true)
-      setTitleModal('O pato ganhou! 🦆🎉')
-      setTextModal(`${scoreboard}Não foi desta vez`)
+      handleJoy(20);
+      setModalVisible(true);
+      setTitleModal('O pato ganhou! 🦆🎉');
+      setTextModal(`${scoreboard} Diversão + 20`);
     } else if (dice === duckDice) {
-      setModalVisible(true)
-      setTitleModal('Empate!')
-      setTextModal(`${scoreboard}Tente novamente para ver quem vence!`)
+      setModalVisible(true);
+      setTitleModal('Empate!');
+      setTextModal(`${scoreboard}Tente novamente para ver quem vence!`);
     }
     setWasRolled(true);
   };
@@ -169,36 +194,6 @@ const Game2 = () => {
         />
       </View>
     </View>
-  );
-};
-
-
-  const handleBack = () => {
-    router.push({
-      pathname: "/duck/joy",
-      params: { id: id }
-    });
-  };
-
-
-  return (
-    <SafeAreaView style={styles.safeAreaContainer}>
-      <ImageBackground
-        source={require('@/assets/images/game-2/background_game2.png')}
-        resizeMode="cover"
-        style={[styles.image]}
-      >
-        <ButtonYellow
-          onPress={handleBack}
-          text="Voltar"
-          width={147}
-          height={40}
-          buttonColor={ButtonColorEnum.Orange}
-        />
-
-
-      </ImageBackground>
-    </SafeAreaView>
   );
 };
 
