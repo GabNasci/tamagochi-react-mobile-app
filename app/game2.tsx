@@ -71,7 +71,6 @@ const Game2 = () => {
 
 
   useEffect(() => {
-    console.log(wasRolled);
     if (!wasRolled) {
       Accelerometer.setUpdateInterval(1500);
 
@@ -136,11 +135,13 @@ const Game2 = () => {
 
 
   useEffect(() => {
-    // o original tava wasRolled && diceNumber > 0 && diceDuckNumber > 0
+    console.log('wasRolled', wasRolled, 'diceNumber', diceNumber, 'diceDuckNumber', diceDuckNumber);
     if (wasRolled && diceNumber !== 0 && diceDuckNumber !== 0 && diceNumber !== 7 && diceDuckNumber !== 7) {
+      console.log('entrou aqui dento');
+      
       checkWinner(diceNumber, diceDuckNumber);
     }
-  }, [wasRolled])
+  }, [wasRolled, diceDuckNumber, diceNumber])
 
 
   const restGame = () => {
