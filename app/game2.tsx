@@ -69,18 +69,22 @@ const Game2 = () => {
     z: 0,
   });
 
+
   useEffect(() => {
-    Accelerometer.setUpdateInterval(1500);
+    console.log(wasRolled);
+    if (!wasRolled) {
+      Accelerometer.setUpdateInterval(1500);
 
-    const subscription = Accelerometer.addListener(accelerometerData => {
-      setData(accelerometerData);
-      checkForShake(accelerometerData);
-    });
+      const subscription = Accelerometer.addListener(accelerometerData => {
+        setData(accelerometerData);
+        checkForShake(accelerometerData);
+      });
 
-    rollDiceDuck();
+      rollDiceDuck();
 
-    return () => subscription && subscription.remove();
-  }, []);
+      return () => subscription && subscription.remove();
+    }
+  }, [wasRolled]);
 
   const checkForShake = ({ x, y, z }: any) => {
     const shakeThreshold = 1.5;
@@ -114,16 +118,16 @@ const Game2 = () => {
     const scoreboard = `Vc ${diceNumber} X ${diceDuckNumber} 🦆\n\n`
     if (dice > duckDice) {
       handleJoy(10);
-      setModalVisible(true);
+      if (modalVisible === false) setModalVisible(true);
       setTitleModal('Você ganhou! 🎉');
       setTextModal(`${scoreboard} Diversão + 10`);
     } else if (dice < duckDice) {
       handleJoy(20);
-      setModalVisible(true);
+      if (modalVisible === false) setModalVisible(true);
       setTitleModal('O pato ganhou! 🦆🎉');
       setTextModal(`${scoreboard} Diversão + 20`);
     } else if (dice === duckDice) {
-      setModalVisible(true);
+      if (modalVisible === false) setModalVisible(true);
       setTitleModal('Empate!');
       setTextModal(`${scoreboard}Tente novamente para ver quem vence!`);
     }
@@ -132,10 +136,19 @@ const Game2 = () => {
 
 
   useEffect(() => {
-    if (wasRolled && diceNumber > 0 && diceDuckNumber > 0) {
+    // o original tava wasRolled && diceNumber > 0 && diceDuckNumber > 0
+    if (wasRolled && diceNumber !== 0 && diceDuckNumber !== 0 && diceNumber !== 7 && diceDuckNumber !== 7) {
       checkWinner(diceNumber, diceDuckNumber);
     }
   }, [wasRolled])
+
+
+  const restGame = () => {
+    setModalVisible(false);
+    setDiceNumber(0);
+    setDiceDuckNumber(0);
+    setWasRolled(false);
+  }
 
   return (
     <View style={styles.safeAreaContainer}>
@@ -152,7 +165,11 @@ const Game2 = () => {
             </Text>
             <View style={{ marginTop: 10 }}>
               <ButtonYellow
-                onPress={() => router.back()}
+                onPress={
+                  () => router.push({
+                    pathname: "/duck/joy",
+                    params: { id: id }
+                  })}
                 text="Voltar"
                 width={147}
                 height={40}
@@ -180,17 +197,16 @@ const Game2 = () => {
               />
             </View>
           </View>
-        ) : (<View style={styles.loadingContainer} >
-          <Text style={styles.loadingText}>Carregando...</Text>
-        </View>
+        ) : (
+          <View style={styles.loadingContainer} >
+            <Text style={styles.loadingText}>Carregando...</Text>
+          </View>
         )}
         <ModalCustom
           visible={modalVisible}
           title={titleModal}
           text={textModal}
-          onClose={
-            () => router.back()
-          }
+          onClose={restGame}
         />
       </View>
     </View>
