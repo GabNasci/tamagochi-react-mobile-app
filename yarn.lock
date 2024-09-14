@@ -4298,7 +4298,7 @@ expo-screen-orientation@~7.0.5:
   resolved "https://registry.npmjs.org/expo-screen-orientation/-/expo-screen-orientation-7.0.5.tgz"
   integrity sha512-1j0MzVzYpjKQo4BWowQ3ZYwC3OnddX/8k06C8VYTAxMyd8ou1k+rG4tm+GIV2n2RSzc3g7cfPlQwSYr3/SGmbg==
 
-expo-sensors@^13.0.9:
+expo-sensors@~13.0.9:
   version "13.0.9"
   resolved "https://registry.npmjs.org/expo-sensors/-/expo-sensors-13.0.9.tgz"
   integrity sha512-yi/TERUP8dpsJWWRgjT+UuQ7PI604PMndwXh9iBnfNO7q+dtoKZKsVSNJw61IKLNflbtCAyJxgmzPoe/JDT04Q==

@@ -114,21 +114,27 @@ const Game2 = () => {
   };
 
   const checkWinner = (dice: number, duckDice: number) => {
+    Accelerometer.removeAllListeners()
     const scoreboard = `Vc ${diceNumber} X ${diceDuckNumber} 🦆\n\n`
     if (dice > duckDice) {
       handleJoy(10);
       if (modalVisible === false) setModalVisible(true);
       setTitleModal('Você ganhou! 🎉');
       setTextModal(`${scoreboard} Diversão + 10`);
+
     } else if (dice < duckDice) {
       handleJoy(20);
       if (modalVisible === false) setModalVisible(true);
       setTitleModal('O pato ganhou! 🦆🎉');
       setTextModal(`${scoreboard} Diversão + 20`);
+
+
     } else if (dice === duckDice) {
       if (modalVisible === false) setModalVisible(true);
       setTitleModal('Empate!');
       setTextModal(`${scoreboard}Tente novamente para ver quem vence!`);
+
+
     }
     setWasRolled(true);
   };
@@ -136,9 +142,9 @@ const Game2 = () => {
 
   useEffect(() => {
     console.log('wasRolled', wasRolled, 'diceNumber', diceNumber, 'diceDuckNumber', diceDuckNumber);
-    if (wasRolled && diceNumber !== 0 && diceDuckNumber !== 0 && diceNumber !== 7 && diceDuckNumber !== 7) {
+    if (!wasRolled && diceNumber !== 0 && diceDuckNumber !== 0 && diceNumber !== 7 && diceDuckNumber !== 7) {
       console.log('entrou aqui dento');
-      
+
       checkWinner(diceNumber, diceDuckNumber);
     }
   }, [wasRolled, diceDuckNumber, diceNumber])
