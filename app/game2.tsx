@@ -19,6 +19,19 @@ const Game2 = () => {
   const [diceDuckNumber, setDiceDuckNumber] = useState(0);
   const [wasRolled, setWasRolled] = useState(false);
 
+
+  const handleBack = () => {
+    router.push({
+        pathname: "/duck/joy",
+        params: { id: id }
+    });
+    Accelerometer.removeAllListeners();
+    setModalVisible(false);
+    setDiceNumber(0);
+    setDiceDuckNumber(0);
+    setWasRolled(false);
+};
+
   const handleGetDuck = async (id: number) => {
     try {
       await duckDataBase.updateAtributesByTime()
@@ -170,11 +183,7 @@ const Game2 = () => {
             </Text>
             <View style={{ marginTop: 10 }}>
               <ButtonYellow
-                onPress={
-                  () => router.push({
-                    pathname: "/duck/joy",
-                    params: { id: id }
-                  })}
+                onPress={handleBack}
                 text="Voltar"
                 width={147}
                 height={40}
