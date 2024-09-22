@@ -29,7 +29,7 @@ const Game2 = () => {
       return setModalVisible(true)
 
     } catch (error) {
-      console.log("erro aqui:" + error)
+      console.log(error)
     }
   }
 
@@ -141,9 +141,7 @@ const Game2 = () => {
 
 
   useEffect(() => {
-    console.log('wasRolled', wasRolled, 'diceNumber', diceNumber, 'diceDuckNumber', diceDuckNumber);
     if (!wasRolled && diceNumber !== 0 && diceDuckNumber !== 0 && diceNumber !== 7 && diceDuckNumber !== 7) {
-      console.log('entrou aqui dento');
 
       checkWinner(diceNumber, diceDuckNumber);
     }

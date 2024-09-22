@@ -23,7 +23,6 @@ export async function initializeDatabase(database: SQLiteDatabase) {
       );
     `);
 
-    // Trigger para inserção
     await database.execAsync(`
       CREATE TRIGGER IF NOT EXISTS after_insert_ducks
       AFTER INSERT ON ducks
@@ -34,7 +33,6 @@ export async function initializeDatabase(database: SQLiteDatabase) {
       END;
     `);
 
-    // Trigger para atualização
     await database.execAsync(`
       CREATE TRIGGER IF NOT EXISTS after_update_ducks
       AFTER UPDATE OF hungry, joy, sleep ON ducks
@@ -45,33 +43,3 @@ export async function initializeDatabase(database: SQLiteDatabase) {
       END;
     `);
 }
-
-// function getPatoImage(type) {
-//     switch(type) {
-//       case 'yellow':
-//         return require('./path/to/yellow.png');
-//       case 'mallard':
-//         return require('./path/to/mallard.png');
-//       case 'green':
-//         return require('./path/to/green.png');
-//       case 'purple':
-//         return require('./path/to/purple.png');
-//       default:
-//         return require('./path/to/default.png'); // Caso o tipo seja inválido
-//     }
-//   }
-  
-//   // Exemplo de uso:
-//   const patoType = 'yellow'; // Suponha que este seja o valor recuperado do banco de dados
-//   const patoImage = getPatoImage(patoType);
-
-// const patoImages = {
-//     yellow: require('./path/to/yellow.png'),
-//     mallard: require('./path/to/mallard.png'),
-//     green: require('./path/to/green.png'),
-//     purple: require('./path/to/purple.png'),
-//   };
-  
-//   function getPatoImage(type) {
-//     return patoImages[type] || patoImages.default;
-//   }
