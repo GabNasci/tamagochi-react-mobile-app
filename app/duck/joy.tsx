@@ -20,7 +20,7 @@ const Joy = () => {
             if (response) return setDuck(response)
             return setModalVisible(true)
         } catch (error) {
-            console.log("erro aqui:" + error)
+            console.log(error)
         }
     }
 

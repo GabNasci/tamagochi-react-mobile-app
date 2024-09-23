@@ -61,28 +61,27 @@ const Game3 = () => {
     setGameStarted(false);
   };
 
-  // Função para gerar posições e direções aleatórias para os cachorros
   const generateRandomPosition = (): Omit<DuckHunter, "id"> => {
     return {
-      positionX: Math.floor(Math.random() * (width - 80)) + 40,  // Limita X entre 40 e width - 40
-      positionY: Math.floor(Math.random() * (height - 400)) + 200, // Limita Y entre 200 e height - 200
-      direction: Math.random() > 0.5 ? 'left' : 'right', // Define a direção como 'left' ou 'right'
+      positionX: Math.floor(Math.random() * (width - 80)) + 40,  
+      positionY: Math.floor(Math.random() * (height - 400)) + 200, 
+      direction: Math.random() > 0.5 ? 'left' : 'right', 
     };
   };
   
 
-  // Função para gerar 2 cachorros
+  
   const generateDogs = () => {
     const newDuckHunters = Array.from({ length: 2 }, (_, idx) => ({
-      id: `${Date.now()}-${idx}`, // Ids únicos
+      id: `${Date.now()}-${idx}`, 
       ...generateRandomPosition()
     }));
     setDuckHunters(newDuckHunters);
   };
 
-  // Função para atualizar um cachorro ao clicar
+  
   const handleDogClick = (id: string) => {
-    setScore(prevScore => prevScore + 1); // Incrementa o score
+    setScore(prevScore => prevScore + 1); 
     setDuckHunters(prevDuckHunters => {
       const updatedDuckHunters = prevDuckHunters.map(duck =>
         duck.id === id ? { ...duck, ...generateRandomPosition() } : duck
@@ -92,7 +91,7 @@ const Game3 = () => {
   };
   
 
-  // Movimento automático dos cachorros da esquerda para a direita e vice-versa
+  
   const moveDucks = () => {
     setDuckHunters(prevDuckHunters =>
       prevDuckHunters.map(duck => {
@@ -100,10 +99,10 @@ const Game3 = () => {
 
         if (newPositionX < 0) {
           newPositionX = 0;
-          duck.direction = 'right'; // Altera a direção ao atingir o limite esquerdo
+          duck.direction = 'right'; 
         } else if (newPositionX > width - 60) {
           newPositionX = width - 60;
-          duck.direction = 'left'; // Altera a direção ao atingir o limite direito
+          duck.direction = 'left'; 
         }
 
         return { ...duck, positionX: newPositionX };
@@ -126,7 +125,7 @@ const Game3 = () => {
           return prevTime - 1;
         });
       }, 1000);
-      const moveInterval = setInterval(moveDucks, 50); // Movimento constante dos cachorros
+      const moveInterval = setInterval(moveDucks, 50); 
 
       return () => {
         clearInterval(timer);
@@ -174,7 +173,7 @@ const Game3 = () => {
                 setGameStarted(true);
                 setScore(0);
                 setTimeLeft(10);
-                generateDogs(); // Gera os cachorros ao iniciar o jogo
+                generateDogs(); 
               }}
               text="Jogar"
               width={147}
@@ -217,7 +216,7 @@ const Game3 = () => {
               style={{
                 width: 55,
                 height: 44,
-                transform: [{ scaleX: dog.direction === 'left' ? -1 : 1 }] // Inverte a imagem se estiver indo para a esquerda
+                transform: [{ scaleX: dog.direction === 'left' ? -1 : 1 }] 
               }}
               resizeMode="cover"
             />
